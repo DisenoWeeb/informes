@@ -6,231 +6,204 @@
 <title>Estudio Tango — Recuperación Crediticia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bordo:#6B0F1A;--bordo2:#8B1525;--bordo-dark:#3D0810;
-  --gold:#C9A84C;--gold2:#E2C16A;--gold-dim:#7A6030;
-  --bg:#0D0D0D;--s1:#181818;--s2:#202020;--s3:#282828;
-  --text:#EDE9E3;--muted:#7A7570;--muted2:#4A4744;
-  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);
-  --serif:'Cormorant Garamond',serif;
-  --sans:'DM Sans',sans-serif;
+  --bordo:#5C0A14;--bordo2:#7A1020;--bordo-deep:#2D0509;
+  --gold:#B8973E;--gold2:#D4B05A;--gold-dim:#6B5522;
+  --bg:#0A0A0A;--s1:#141414;--s2:#1C1C1C;--s3:#222222;
+  --text:#E8E4DE;--muted:#6B6762;--muted2:#3A3835;
+  --b1:rgba(255,255,255,.05);--b2:rgba(255,255,255,.09);--b3:rgba(255,255,255,.14);
+  --serif:'Instrument Serif',serif;
+  --sans:'Inter',sans-serif;
 }
-html,body{height:100%}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;font-size:14px;font-weight:400}
 
-/* ────── LAYOUT ────── */
-.layout{display:flex;height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(184,151,62,.18);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:rgba(184,151,62,.32)}
 
-/* ────── SIDEBAR ────── */
+.layout{display:flex;height:100vh}
+
 .sidebar{
-  width:340px;flex-shrink:0;
-  background:var(--bordo-dark);
-  border-right:1px solid rgba(201,168,76,.1);
+  width:300px;flex-shrink:0;
+  background:var(--bordo-deep);
+  border-right:1px solid rgba(184,151,62,.08);
   display:flex;flex-direction:column;
-  padding:2.25rem 2rem;
+  padding:2rem 1.75rem;
   overflow-y:auto;
 }
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:2.5rem}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
 .brand-mark{
-  width:38px;height:38px;border-radius:7px;
-  background:var(--gold);flex-shrink:0;
+  width:34px;height:34px;border-radius:6px;
+  background:rgba(184,151,62,.12);
+  border:.5px solid rgba(184,151,62,.25);
   display:flex;align-items:center;justify-content:center;
 }
-.brand-mark i{font-size:20px;color:var(--bordo-dark)}
-.brand-name{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--text);letter-spacing:.04em;line-height:1.2}
-.brand-sub{font-size:9px;color:rgba(201,168,76,.45);letter-spacing:.13em;text-transform:uppercase;margin-top:2px}
+.brand-mark i{font-size:17px;color:var(--gold)}
+.brand-name{font-family:var(--serif);font-size:16px;color:var(--text);line-height:1.2;letter-spacing:.02em}
+.brand-sub{font-size:9px;color:rgba(184,151,62,.35);letter-spacing:.14em;text-transform:uppercase;margin-top:1px}
 
-.sidebar h1{
-  font-family:var(--serif);font-size:2rem;font-weight:500;
-  line-height:1.2;color:var(--text);letter-spacing:-.01em;
-  margin-bottom:1rem;
+.sidebar-tagline{
+  font-family:var(--serif);font-size:1.75rem;line-height:1.25;
+  color:var(--text);margin-bottom:.85rem;letter-spacing:-.01em;font-weight:400;
 }
-.sidebar h1 em{font-style:italic;color:var(--gold2)}
-.sidebar-desc{
-  font-size:.875rem;color:var(--muted);line-height:1.75;
-  font-weight:300;margin-bottom:2rem;
-}
+.sidebar-tagline em{font-style:italic;color:var(--gold2)}
+.sidebar-desc{font-size:.8125rem;color:var(--muted);line-height:1.8;font-weight:300;margin-bottom:2rem}
 
-.steps{display:flex;flex-direction:column;gap:.9rem;margin-bottom:auto}
-.step{display:flex;gap:13px;align-items:flex-start}
+.steps{display:flex;flex-direction:column;gap:.8rem;margin-bottom:auto}
+.step{display:flex;gap:12px;align-items:flex-start}
 .step-n{
-  width:26px;height:26px;border-radius:50%;flex-shrink:0;
-  border:1px solid var(--gold-dim);margin-top:1px;
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;margin-top:1px;
+  border:.5px solid var(--gold-dim);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--serif);font-size:12px;color:var(--gold);
+  font-family:var(--serif);font-size:11px;color:var(--gold);
 }
-.step-b strong{display:block;font-size:.8125rem;font-weight:500;color:var(--text);margin-bottom:2px}
-.step-b span{font-size:.75rem;color:var(--muted);line-height:1.55}
+.step-b strong{display:block;font-size:.75rem;font-weight:500;color:var(--text);margin-bottom:1px}
+.step-b span{font-size:.7rem;color:var(--muted);line-height:1.6}
 
 .sidebar-foot{
-  margin-top:2rem;padding-top:1.5rem;
-  border-top:1px solid var(--b1);
-  font-size:.7rem;color:var(--muted2);line-height:1.65;
+  margin-top:2rem;padding-top:1.25rem;
+  border-top:.5px solid var(--b1);
+  font-size:.65rem;color:var(--muted2);line-height:1.7;
 }
-.sidebar-foot a{color:var(--gold-dim);text-decoration:none}
+.sidebar-foot a{color:rgba(184,151,62,.4);text-decoration:none}
 .sidebar-foot a:hover{color:var(--gold)}
 
-/* ────── MAIN ────── */
-.main{flex:1;overflow-y:auto;padding:2rem 2rem 3rem;display:flex;flex-direction:column;gap:0}
+.main{flex:1;overflow-y:auto;padding:2rem 2rem 3rem;display:flex;flex-direction:column;gap:1rem}
 
-.top-label{
-  font-size:.65rem;font-weight:500;color:var(--gold-dim);
-  text-transform:uppercase;letter-spacing:.12em;margin-bottom:.65rem;
-}
+.eyebrow{font-size:.6rem;font-weight:500;color:var(--gold-dim);text-transform:uppercase;letter-spacing:.13em;margin-bottom:.5rem}
 
-/* ────── SEARCH ────── */
 .search-card{
-  background:var(--s1);border:.5px solid var(--b2);
-  border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;
+  background:var(--s1);border:.5px solid var(--b2);border-radius:12px;padding:1.1rem 1.25rem;
 }
-.search-inner-lbl{
-  font-size:.65rem;font-weight:500;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
-}
-.input-row{display:flex;gap:8px}
+.search-lbl{font-size:.6rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.input-row{display:flex;gap:7px}
 #cuit{
-  flex:1;font-size:15px;padding:11px 13px;border-radius:8px;
+  flex:1;font-size:14px;padding:10px 12px;border-radius:7px;
   border:.5px solid var(--b2);background:var(--s2);
-  color:var(--text);outline:none;font-family:var(--sans);
+  color:var(--text);outline:none;font-family:var(--sans);font-weight:300;
+  transition:border-color .15s;
 }
 #cuit::placeholder{color:var(--muted2)}
-#cuit:focus{border-color:var(--gold-dim)}
-.btn-consultar{
+#cuit:focus{border-color:rgba(184,151,62,.35)}
+.btn-c{
   background:var(--bordo);color:var(--text);
-  border:.5px solid var(--bordo2);border-radius:8px;
-  padding:11px 20px;font-size:.875rem;font-weight:500;
-  cursor:pointer;font-family:var(--sans);letter-spacing:.02em;
-  white-space:nowrap;
+  border:.5px solid var(--bordo2);border-radius:7px;
+  padding:10px 18px;font-size:.8125rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);letter-spacing:.02em;white-space:nowrap;
+  transition:background .15s;
 }
-.btn-consultar:hover{background:var(--bordo2)}
-.btn-consultar:active{transform:scale(.97)}
+.btn-c:hover{background:var(--bordo2)}
+.btn-c:active{transform:scale(.97)}
 
-.prog-wrap{margin-top:.85rem;display:none}
-.prog-bg{height:2px;background:var(--s3);border-radius:2px;overflow:hidden}
-.prog-fill{height:100%;width:0%;background:var(--gold);transition:width .4s ease;border-radius:2px}
-.prog-lbl{font-size:.68rem;color:var(--muted);margin-top:5px;letter-spacing:.02em}
+.prog-wrap{margin-top:.75rem;display:none}
+.prog-bg{height:1px;background:var(--b2);border-radius:1px;overflow:hidden}
+.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .45s ease}
+.prog-lbl{font-size:.65rem;color:var(--muted);margin-top:5px;letter-spacing:.03em}
 
-/* ────── RESULTADO ────── */
-#resultado{display:flex;flex-direction:column;gap:1rem}
+#resultado{display:flex;flex-direction:column;gap:.85rem}
 
 .result-header{
-  background:var(--bordo-dark);border:.5px solid rgba(201,168,76,.18);
-  border-radius:12px;padding:1.1rem 1.25rem;
+  background:var(--bordo-deep);border:.5px solid rgba(184,151,62,.14);
+  border-radius:12px;padding:1rem 1.25rem;
   display:flex;align-items:center;gap:12px;
 }
 .avatar{
-  width:46px;height:46px;border-radius:50%;flex-shrink:0;
-  border:1.5px solid var(--gold-dim);
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  border:.5px solid var(--gold-dim);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--serif);font-size:17px;color:var(--gold);
+  font-family:var(--serif);font-size:16px;color:var(--gold);
 }
-.rh-name{font-size:.9375rem;font-weight:500;color:var(--text);line-height:1.3}
-.rh-cuit{font-size:.72rem;color:rgba(201,168,76,.45);margin-top:2px;letter-spacing:.04em}
+.rh-name{font-size:.875rem;font-weight:500;color:var(--text);line-height:1.3}
+.rh-cuit{font-size:.65rem;color:rgba(184,151,62,.4);margin-top:2px;letter-spacing:.05em}
 
-.score-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.score-strip{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .score-box{
-  background:var(--s1);border:.5px solid var(--b1);
-  border-radius:10px;padding:13px;text-align:center;
+  background:var(--s1);border:.5px solid var(--b1);border-radius:10px;
+  padding:12px 14px;text-align:center;
 }
-.score-val{font-size:1.75rem;font-weight:400;font-family:var(--serif);line-height:1}
+.score-val{font-size:1.6rem;font-family:var(--serif);line-height:1;font-weight:400}
 .score-lbl{font-size:.6rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
-.score-sub{font-size:.6875rem;font-weight:500;margin-top:4px}
+.score-sub{font-size:.6875rem;font-weight:500;margin-top:3px}
 
-/* ────── SECCIÓN ────── */
 .sec-wrap{background:var(--s1);border:.5px solid var(--b1);border-radius:12px;overflow:hidden}
-.sec-head{
-  padding:.85rem 1.25rem;border-bottom:.5px solid var(--b1);
-  display:flex;align-items:center;gap:8px;
-}
-.sec-head i{font-size:16px;color:var(--gold-dim)}
-.sec-head-title{font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-.sec-body{padding:1rem 1.25rem}
+.sec-head{padding:.75rem 1.25rem;border-bottom:.5px solid var(--b1);display:flex;align-items:center;gap:7px}
+.sec-head i{font-size:14px;color:var(--gold-dim)}
+.sec-head-title{font-size:.6rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.sec-body{padding:.9rem 1.1rem}
 
-/* ────── DEUDA CARD ────── */
-.deuda-item{
-  background:var(--s2);border:.5px solid var(--b1);
-  border-radius:9px;padding:.9rem 1rem;
-}
-.deuda-item+.deuda-item{margin-top:7px}
-.deuda-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px}
+.deuda-item{background:var(--s2);border:.5px solid var(--b1);border-radius:8px;padding:.8rem .9rem}
+.deuda-item+.deuda-item{margin-top:6px}
+.deuda-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
 .deuda-ent{font-size:.8125rem;font-weight:500;color:var(--text);line-height:1.35;flex:1}
-.badge{font-size:.6rem;font-weight:500;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;letter-spacing:.03em}
-.s1c{background:rgba(74,155,111,.15);color:#6DBF95;border:.5px solid rgba(74,155,111,.25)}
-.s2c{background:rgba(201,168,76,.12);color:#E2C16A;border:.5px solid rgba(201,168,76,.2)}
-.s3c{background:rgba(186,117,23,.12);color:#D4943A;border:.5px solid rgba(186,117,23,.2)}
-.s4c{background:rgba(192,57,43,.12);color:#E8705F;border:.5px solid rgba(192,57,43,.2)}
-.s5c{background:rgba(163,45,45,.18);color:#F08070;border:.5px solid rgba(163,45,45,.25)}
-.s6c{background:rgba(80,75,72,.2);color:#8A8480;border:.5px solid var(--b2)}
-.deuda-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.ds{background:var(--s3);border-radius:7px;padding:7px 10px}
-.ds-val{font-size:.875rem;font-weight:500;color:var(--text)}
-.ds-lbl{font-size:.6rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+.badge{font-size:.58rem;font-weight:500;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;letter-spacing:.03em}
+.s1c{background:rgba(74,155,111,.12);color:#5DBF8A;border:.5px solid rgba(74,155,111,.2)}
+.s2c{background:rgba(184,151,62,.1);color:#D4B05A;border:.5px solid rgba(184,151,62,.18)}
+.s3c{background:rgba(186,117,23,.1);color:#C98C30;border:.5px solid rgba(186,117,23,.18)}
+.s4c{background:rgba(192,57,43,.1);color:#E06050;border:.5px solid rgba(192,57,43,.2)}
+.s5c{background:rgba(160,40,40,.14);color:#E87068;border:.5px solid rgba(160,40,40,.22)}
+.s6c{background:rgba(70,68,65,.18);color:#7A7875;border:.5px solid var(--b2)}
+.deuda-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.ds{background:var(--s3);border-radius:6px;padding:6px 9px}
+.ds-val{font-size:.8125rem;font-weight:500;color:var(--text)}
+.ds-lbl{font-size:.58rem;color:var(--muted);margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
 
-/* ────── HISTORIAL TABLE ────── */
-.hist-wrap{overflow-x:auto;border-radius:0}
-.hist-table{border-collapse:collapse;width:100%;min-width:420px}
-.hist-table th{
-  background:var(--s2);color:var(--muted);font-weight:500;
-  padding:8px 12px;text-align:left;border-bottom:.5px solid var(--b2);
-  font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;
-}
-.hist-table td{
-  padding:8px 12px;border-bottom:.5px solid var(--b1);
-  color:var(--text);font-size:.8125rem;vertical-align:middle;
-}
-.hist-table tr:last-child td{border-bottom:none}
-.hist-table tbody tr:hover{background:var(--s2)}
-.sdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
-
-/* ────── PERIODO LABEL ────── */
-.periodo-lbl{
-  font-size:.65rem;color:var(--gold-dim);text-transform:uppercase;
-  letter-spacing:.1em;margin-bottom:.6rem;margin-top:.85rem;
-}
+.periodo-lbl{font-size:.6rem;color:var(--gold-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;margin-top:.75rem}
 .periodo-lbl:first-child{margin-top:0}
 
-/* ────── EMPTY / ERROR ────── */
-.empty-state{text-align:center;padding:1.75rem;color:var(--muted);font-size:.8125rem}
-.empty-state i{font-size:26px;display:block;margin-bottom:.6rem;color:var(--muted2)}
+.hist-body{padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:10px}
+.hist-ent-card{background:var(--s2);border:.5px solid var(--b1);border-radius:8px;padding:.8rem .9rem}
+.hist-ent-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.hist-ent-name{font-size:.8125rem;font-weight:500;color:var(--text);flex:1;line-height:1.3}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{
+  background:var(--s3);border:.5px solid var(--b2);border-radius:6px;
+  padding:6px 10px;display:flex;flex-direction:column;align-items:center;width:110px;
+}
+.chip-per{font-size:.6rem;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+.chip-dot{width:7px;height:7px;border-radius:50%;margin:4px 0;flex-shrink:0}
+.chip-sit{font-size:.65rem;font-weight:500;margin-bottom:3px}
+.chip-monto{font-size:.6875rem;font-weight:500;color:var(--text);white-space:nowrap;letter-spacing:-.01em}
+
+.empty-state{text-align:center;padding:1.5rem;color:var(--muted);font-size:.8rem}
+.empty-state i{font-size:22px;display:block;margin-bottom:.5rem;color:var(--muted2)}
 .error-box{
-  background:var(--s1);border:.5px solid rgba(192,57,43,.3);
-  border-radius:10px;padding:1.1rem 1.25rem;text-align:center;
-  color:#E8705F;font-size:.8125rem;display:flex;align-items:center;gap:10px;justify-content:center;
+  background:var(--s1);border:.5px solid rgba(192,57,43,.25);border-radius:10px;
+  padding:1rem 1.25rem;text-align:center;color:#E06050;font-size:.8rem;
+  display:flex;align-items:center;gap:8px;justify-content:center;
 }
-.error-box i{font-size:18px;flex-shrink:0}
 
-/* ────── CTA ────── */
 .cta-card{
-  background:var(--s1);border:.5px solid rgba(201,168,76,.18);
-  border-radius:12px;padding:1.25rem;
+  background:var(--s1);border:.5px solid rgba(184,151,62,.14);border-radius:12px;padding:1.25rem;
 }
-.cta-card p{font-size:.8125rem;color:var(--muted);line-height:1.65;margin-bottom:1rem}
+.cta-card p{font-size:.8rem;color:var(--muted);line-height:1.75;margin-bottom:1rem;font-weight:300}
 .cta-card strong{color:var(--gold2);font-weight:500}
-.cta-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.btn-primary{
+.cta-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.btn-p{
   background:var(--bordo);color:var(--text);border:.5px solid var(--bordo2);
-  border-radius:8px;padding:10px;font-size:.8125rem;font-weight:500;
-  cursor:pointer;font-family:var(--sans);text-align:center;
+  border-radius:7px;padding:10px 8px;font-size:.8rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);text-align:center;transition:background .15s;
 }
-.btn-secondary{
+.btn-s{
   background:var(--s2);color:var(--text);border:.5px solid var(--b2);
-  border-radius:8px;padding:10px;font-size:.8125rem;font-weight:500;
-  cursor:pointer;font-family:var(--sans);text-align:center;
+  border-radius:7px;padding:10px 8px;font-size:.8rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);text-align:center;transition:background .15s;
 }
-.btn-primary:hover{background:var(--bordo2)}
-.btn-secondary:hover{background:var(--s3)}
-.btn-primary:active,.btn-secondary:active{transform:scale(.97)}
+.btn-p:hover{background:var(--bordo2)}
+.btn-s:hover{background:var(--s3)}
+.btn-p:active,.btn-s:active{transform:scale(.97)}
 
-/* ────── MOBILE ────── */
-@media(max-width:860px){
-  .layout{flex-direction:column;height:auto;overflow:visible}
-  .sidebar{width:100%;flex-shrink:0;padding:1.75rem 1.5rem}
-  .sidebar h1{font-size:1.6rem}
-  .main{padding:1.5rem 1.25rem 3rem}
+@media(max-width:820px){
+  html,body{height:auto;overflow:visible}
+  .layout{flex-direction:column;height:auto}
+  .sidebar{width:100%;padding:1.5rem 1.25rem}
+  .sidebar-tagline{font-size:1.5rem}
+  .main{padding:1.25rem 1.25rem 3rem}
 }
 </style>
 </head>
@@ -238,7 +211,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0}
 
 <div class="layout">
 
-  <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark"><i class="ti ti-scale" aria-hidden="true"></i></div>
@@ -247,10 +219,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0}
         <div class="brand-sub">Recuperación crediticia</div>
       </div>
     </div>
-
-    <h1>Salí de las bases de riesgo.<br><em>Recuperá tu crédito.</em></h1>
-    <p class="sidebar-desc">Consultamos tu situación en la Central de Deudores del Banco Central. Identificamos deudas, entidades y plazos para diseñar un plan de recuperación a tu medida.</p>
-
+    <div class="sidebar-tagline">Salí de las bases<br>de riesgo.<br><em>Recuperá tu crédito.</em></div>
+    <p class="sidebar-desc">Consultamos tu situación en la Central de Deudores del Banco Central. Identificamos deudas, entidades y plazos para diseñar un plan a tu medida.</p>
     <div class="steps">
       <div class="step">
         <div class="step-n">01</div>
@@ -270,26 +240,24 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0}
         <div class="step-n">03</div>
         <div class="step-b">
           <strong>Salida del sistema de riesgo</strong>
-          <span>Acompañamos hasta que tu historial quede limpio y activo.</span>
+          <span>Acompañamos hasta que tu historial quede limpio.</span>
         </div>
       </div>
     </div>
-
     <div class="sidebar-foot">
       Datos oficiales de <a href="https://www.bcra.gob.ar" target="_blank" rel="noopener">bcra.gob.ar</a> — información pública y gratuita.<br>
       Este sitio no es parte del Banco Central de la República Argentina.
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
   <main class="main">
-    <div class="top-label">Consulta gratuita · Central de deudores BCRA</div>
+    <div class="eyebrow">Consulta gratuita · Central de deudores BCRA</div>
 
     <div class="search-card">
-      <div class="search-inner-lbl">Informe crediticio</div>
+      <div class="search-lbl">Informe crediticio</div>
       <div class="input-row">
         <input id="cuit" type="tel" placeholder="CUIT / CUIL sin guiones" inputmode="numeric" autocomplete="off">
-        <button class="btn-consultar" onclick="consultar()">Consultar</button>
+        <button class="btn-c" onclick="consultar()">Consultar</button>
       </div>
       <div class="prog-wrap" id="prog-wrap">
         <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
@@ -303,199 +271,187 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0}
 </div>
 
 <script>
-// ── REEMPLAZÁ ESTA URL CON LA DE TU APPS SCRIPT ──
-const API = "https://script.google.com/macros/s/AKfycby29NcU3FPBzkdv3l9Cz_eNBgpmLnTNmnOtkqROAxxt4QXi3YzH77AQCXqMXY7pAba-1Q/exec";
+const API   = "https://script.google.com/macros/s/AKfycby29NcU3FPBzkdv3l9Cz_eNBgpmLnTNmnOtkqROAxxt4QXi3YzH77AQCXqMXY7pAba-1Q/exec";
+const TOKEN = "tango2024secure";
 
 const SITS = {
-  1: { label: "Al día",          cls: "s1c", dot: "#4A9B6F" },
-  2: { label: "Seg. especial",   cls: "s2c", dot: "#C9A84C" },
-  3: { label: "Con problemas",   cls: "s3c", dot: "#BA7517" },
-  4: { label: "Alto riesgo",     cls: "s4c", dot: "#C0392B" },
-  5: { label: "Irrecuperable",   cls: "s5c", dot: "#A32D2D" },
-  6: { label: "En quiebra",      cls: "s6c", dot: "#5A5552" }
+  1:{label:"Al día",        cls:"s1c",dot:"#4A9B6F"},
+  2:{label:"Seg. especial", cls:"s2c",dot:"#B8973E"},
+  3:{label:"Con problemas", cls:"s3c",dot:"#BA7517"},
+  4:{label:"Alto riesgo",   cls:"s4c",dot:"#C0392B"},
+  5:{label:"Irrecuperable", cls:"s5c",dot:"#A32D2D"},
+  6:{label:"En quiebra",    cls:"s6c",dot:"#5A5552"}
 };
-function si(n) { return SITS[n] || { label: "Situación " + n, cls: "s6c", dot: "#5A5552" }; }
-function fmt(n) { return "$" + Math.round(n * 1000).toLocaleString("es-AR"); }
-function fmtD(d) { return (!d || d === 0) ? "Sin atraso" : d + " días"; }
-function ini(nom) {
-  if (!nom) return "?";
-  const p = nom.trim().split(/\s+/);
-  return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : nom.substring(0, 2).toUpperCase();
+function si(n){return SITS[n]||{label:"Situación "+n,cls:"s6c",dot:"#5A5552"};}
+function fmt(n){return "$"+Math.round(n*1000).toLocaleString("es-AR");}
+function fmtD(d){return(!d||d===0)?"Sin atraso":d+" días";}
+function ini(nom){
+  if(!nom)return"?";
+  var p=nom.trim().split(/\s+/);
+  return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():nom.substring(0,2).toUpperCase();
 }
-function fmtPeriodo(p) {
-  const s = String(p);
-  return s.length === 6 ? s.slice(0, 4) + "/" + s.slice(4) : s;
-}
+function fmtP(p){var s=String(p);return s.length===6?s.slice(0,4)+"/"+s.slice(4):s;}
 
-let progTimer = null;
-function startProg() {
-  document.getElementById("prog-wrap").style.display = "block";
-  const fill = document.getElementById("prog-fill");
-  const lbl  = document.getElementById("prog-lbl");
-  const steps = [
-    { p: 15, t: "Conectando con el Banco Central..." },
-    { p: 40, t: "Consultando deudas actuales..." },
-    { p: 65, t: "Consultando historial 24 meses..." },
-    { p: 85, t: "Procesando información..." }
+var progTimer=null;
+function startProg(){
+  document.getElementById("prog-wrap").style.display="block";
+  var fill=document.getElementById("prog-fill"),lbl=document.getElementById("prog-lbl");
+  var steps=[
+    {p:15,t:"Conectando con el Banco Central..."},
+    {p:40,t:"Consultando deudas actuales..."},
+    {p:65,t:"Consultando historial 24 meses..."},
+    {p:85,t:"Procesando información..."}
   ];
-  let i = 0;
-  fill.style.width = "5%";
-  lbl.textContent = steps[0].t;
-  progTimer = setInterval(function() {
-    if (i < steps.length) { fill.style.width = steps[i].p + "%"; lbl.textContent = steps[i].t; i++; }
-  }, 800);
+  var i=0;fill.style.width="5%";lbl.textContent=steps[0].t;
+  progTimer=setInterval(function(){
+    if(i<steps.length){fill.style.width=steps[i].p+"%";lbl.textContent=steps[i].t;i++;}
+  },850);
 }
-function endProg() {
+function endProg(){
   clearInterval(progTimer);
-  document.getElementById("prog-fill").style.width = "100%";
-  document.getElementById("prog-lbl").textContent = "Completado.";
-  setTimeout(function() { document.getElementById("prog-wrap").style.display = "none"; }, 700);
+  document.getElementById("prog-fill").style.width="100%";
+  document.getElementById("prog-lbl").textContent="Completado.";
+  setTimeout(function(){document.getElementById("prog-wrap").style.display="none";},700);
 }
 
-function consultar() {
-  const cuit = document.getElementById("cuit").value.trim().replace(/\D/g, "");
-  const res  = document.getElementById("resultado");
-  res.innerHTML = "";
-
-  if (!cuit) {
-    res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>Ingresá tu CUIT para continuar.</div>';
+function consultar(){
+  var cuit=document.getElementById("cuit").value.trim().replace(/\D/g,"");
+  var res=document.getElementById("resultado");
+  res.innerHTML="";
+  if(!cuit){
+    res.innerHTML='<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>Ingresá tu CUIT para continuar.</div>';
     return;
   }
-
   startProg();
-  document.getElementById("script-bcra") && document.getElementById("script-bcra").remove();
-
-  const cbName = "bcraCallback_" + Date.now();
-  window[cbName] = function(json) {
+  var old=document.getElementById("script-bcra");if(old)old.remove();
+  var cbName="bcraCallback_"+Date.now();
+  window[cbName]=function(json){
     delete window[cbName];
-    document.getElementById("script-bcra") && document.getElementById("script-bcra").remove();
+    var s=document.getElementById("script-bcra");if(s)s.remove();
     endProg();
-    if (!json.ok) {
-      res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>' + json.error + '</div>';
+    if(!json.ok){
+      res.innerHTML='<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>'+json.error+'</div>';
       return;
     }
     renderizar(json);
   };
-
-  const s = document.createElement("script");
-  s.id = "script-bcra";
-  s.src = API + "?cuit=" + cuit + "&callback=" + cbName;
-  s.onerror = function() {
+  var s=document.createElement("script");
+  s.id="script-bcra";
+  s.src=API+"?cuit="+cuit+"&token="+TOKEN+"&callback="+cbName;
+  s.onerror=function(){
     endProg();
-    res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>Error al conectar con el servidor. Verificá tu conexión.</div>';
+    res.innerHTML='<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>Error al conectar. Verificá tu conexión.</div>';
   };
   document.body.appendChild(s);
 }
 
-function renderizar(json) {
-  const res = document.getElementById("resultado");
-  const d   = json.actual.results;
-  const h   = json.historica.results;
+function renderizar(json){
+  var res=document.getElementById("resultado");
+  var d=json.actual.results,h=json.historica.results;
+  var allE=(d.periodos||[]).reduce(function(acc,p){return acc.concat(p.entidades);},[]);
+  var peor=allE.reduce(function(m,e){return Math.max(m,e.situacion);},1)||1;
+  var pi=si(peor);
+  var total=allE.reduce(function(s,e){return s+e.monto;},0)||0;
+  var cant=allE.length;
+  var html="";
 
-  const allE   = (d.periodos || []).flatMap(function(p) { return p.entidades; });
-  const peor   = allE.reduce(function(m, e) { return Math.max(m, e.situacion); }, 1) || 1;
-  const pi     = si(peor);
-  const total  = allE.reduce(function(s, e) { return s + e.monto; }, 0) || 0;
-  const cant   = allE.length;
+  html+='<div class="result-header">'
+    +'<div class="avatar">'+ini(d.denominacion)+'</div>'
+    +'<div><div class="rh-name">'+d.denominacion+'</div>'
+    +'<div class="rh-cuit">CUIT '+d.identificacion+'</div></div>'
+    +'</div>';
 
-  var html = "";
+  html+='<div class="score-strip">'
+    +'<div class="score-box">'
+    +'<div class="score-val" style="color:'+pi.dot+'">'+peor+'</div>'
+    +'<div class="score-lbl">Situación máxima</div>'
+    +'<div class="score-sub" style="color:'+pi.dot+'">'+pi.label+'</div>'
+    +'</div>'
+    +'<div class="score-box">'
+    +'<div class="score-val" style="color:#D4B05A">'+fmt(total)+'</div>'
+    +'<div class="score-lbl">Exposición total</div>'
+    +'<div class="score-sub" style="color:var(--muted)">'+cant+' entidad'+(cant!==1?'es':'')+'</div>'
+    +'</div></div>';
 
-  // Header titular
-  html += '<div class="result-header">'
-    + '<div class="avatar">' + ini(d.denominacion) + '</div>'
-    + '<div>'
-    + '<div class="rh-name">' + d.denominacion + '</div>'
-    + '<div class="rh-cuit">CUIT ' + d.identificacion + '</div>'
-    + '</div>'
-    + '</div>';
+  html+='<div class="sec-wrap">'
+    +'<div class="sec-head"><i class="ti ti-building-bank" aria-hidden="true"></i>'
+    +'<span class="sec-head-title">Deuda actual</span></div>'
+    +'<div class="sec-body">';
 
-  // Score strip
-  html += '<div class="score-strip">'
-    + '<div class="score-box">'
-    + '<div class="score-val" style="color:' + pi.dot + '">' + peor + '</div>'
-    + '<div class="score-lbl">Situación máxima</div>'
-    + '<div class="score-sub" style="color:' + pi.dot + '">' + pi.label + '</div>'
-    + '</div>'
-    + '<div class="score-box">'
-    + '<div class="score-val" style="color:#E2C16A">' + fmt(total) + '</div>'
-    + '<div class="score-lbl">Exposición total</div>'
-    + '<div class="score-sub" style="color:#7A7570">' + cant + ' entidad' + (cant !== 1 ? 'es' : '') + '</div>'
-    + '</div>'
-    + '</div>';
-
-  // Deuda actual
-  html += '<div class="sec-wrap">'
-    + '<div class="sec-head"><i class="ti ti-building-bank" aria-hidden="true"></i><span class="sec-head-title">Deuda actual</span></div>'
-    + '<div class="sec-body">';
-
-  if (d.periodos && d.periodos.length > 0) {
-    d.periodos.forEach(function(periodo) {
-      html += '<div class="periodo-lbl">Período ' + fmtPeriodo(periodo.periodo) + '</div>';
-      periodo.entidades.forEach(function(e) {
-        var info = si(e.situacion);
-        html += '<div class="deuda-item">'
-          + '<div class="deuda-top">'
-          + '<div class="deuda-ent">' + e.entidad + '</div>'
-          + '<span class="badge ' + info.cls + '">Sit. ' + e.situacion + ' — ' + info.label + '</span>'
-          + '</div>'
-          + '<div class="deuda-grid">'
-          + '<div class="ds"><div class="ds-val">' + fmt(e.monto) + '</div><div class="ds-lbl">Monto adeudado</div></div>'
-          + '<div class="ds"><div class="ds-val" style="color:' + (e.diasAtrasoPago > 0 ? '#E8705F' : '#6DBF95') + '">' + fmtD(e.diasAtrasoPago) + '</div><div class="ds-lbl">Días de atraso</div></div>'
-          + '</div>'
-          + '</div>';
+  if(d.periodos&&d.periodos.length>0){
+    d.periodos.forEach(function(periodo){
+      html+='<div class="periodo-lbl">Período '+fmtP(periodo.periodo)+'</div>';
+      periodo.entidades.forEach(function(e){
+        var info=si(e.situacion);
+        html+='<div class="deuda-item">'
+          +'<div class="deuda-top">'
+          +'<div class="deuda-ent">'+e.entidad+'</div>'
+          +'<span class="badge '+info.cls+'">Sit. '+e.situacion+' — '+info.label+'</span>'
+          +'</div>'
+          +'<div class="deuda-grid">'
+          +'<div class="ds"><div class="ds-val">'+fmt(e.monto)+'</div><div class="ds-lbl">Monto adeudado</div></div>'
+          +'<div class="ds"><div class="ds-val" style="color:'+(e.diasAtrasoPago>0?'#E06050':'#5DBF8A')+'">'+fmtD(e.diasAtrasoPago)+'</div><div class="ds-lbl">Días de atraso</div></div>'
+          +'</div></div>';
       });
     });
-  } else {
-    html += '<div class="empty-state"><i class="ti ti-circle-check" style="color:#4A9B6F" aria-hidden="true"></i>Sin deudas activas registradas</div>';
+  }else{
+    html+='<div class="empty-state"><i class="ti ti-circle-check" style="color:#4A9B6F" aria-hidden="true"></i>Sin deudas activas registradas</div>';
   }
-  html += '</div></div>';
+  html+='</div></div>';
 
-  // Historial
-  html += '<div class="sec-wrap">'
-    + '<div class="sec-head"><i class="ti ti-history" aria-hidden="true"></i><span class="sec-head-title">Historial — últimos 24 meses</span></div>';
+  html+='<div class="sec-wrap">'
+    +'<div class="sec-head"><i class="ti ti-history" aria-hidden="true"></i>'
+    +'<span class="sec-head-title">Historial — últimos 24 meses</span></div>';
 
-  if (h.periodos && h.periodos.length > 0) {
-    var filas = [];
-    h.periodos.forEach(function(p) {
-      p.entidades.forEach(function(e) {
-        filas.push({ periodo: p.periodo, entidad: e.entidad, situacion: e.situacion, monto: e.monto });
+  if(h.periodos&&h.periodos.length>0){
+    var porEnt={};
+    h.periodos.forEach(function(p){
+      p.entidades.forEach(function(e){
+        if(!porEnt[e.entidad])porEnt[e.entidad]=[];
+        porEnt[e.entidad].push({periodo:p.periodo,situacion:e.situacion,monto:e.monto});
       });
     });
-    filas.sort(function(a, b) {
-      return a.entidad.localeCompare(b.entidad) || String(b.periodo).localeCompare(String(a.periodo));
+    var ents=Object.keys(porEnt).sort();
+    html+='<div class="hist-body">';
+    ents.forEach(function(nombre){
+      var regs=porEnt[nombre].sort(function(a,b){return String(b.periodo).localeCompare(String(a.periodo));});
+      var peorE=regs.reduce(function(m,r){return Math.max(m,r.situacion);},1);
+      var iE=si(peorE);
+      html+='<div class="hist-ent-card">'
+        +'<div class="hist-ent-head">'
+        +'<div class="hist-ent-name">'+nombre+'</div>'
+        +'<span class="badge '+iE.cls+'">Máx. Sit. '+peorE+'</span>'
+        +'</div>'
+        +'<div class="chips">';
+      regs.forEach(function(r){
+        var info=si(r.situacion);
+        html+='<div class="chip">'
+          +'<span class="chip-per">'+fmtP(r.periodo)+'</span>'
+          +'<span class="chip-dot" style="background:'+info.dot+'"></span>'
+          +'<span class="chip-sit" style="color:'+info.dot+'">Sit. '+r.situacion+'</span>'
+          +'<span class="chip-monto">'+fmt(r.monto)+'</span>'
+          +'</div>';
+      });
+      html+='</div></div>';
     });
-    html += '<div class="hist-wrap"><table class="hist-table">'
-      + '<thead><tr><th>Entidad</th><th>Período</th><th>Situación</th><th>Monto</th></tr></thead>'
-      + '<tbody>';
-    filas.forEach(function(f) {
-      var info = si(f.situacion);
-      html += '<tr>'
-        + '<td style="font-weight:500">' + f.entidad + '</td>'
-        + '<td>' + fmtPeriodo(f.periodo) + '</td>'
-        + '<td><span class="sdot" style="background:' + info.dot + '"></span>' + f.situacion + ' — ' + info.label + '</td>'
-        + '<td>' + fmt(f.monto) + '</td>'
-        + '</tr>';
-    });
-    html += '</tbody></table></div>';
-  } else {
-    html += '<div class="sec-body"><div class="empty-state"><i class="ti ti-calendar-off" aria-hidden="true"></i>Sin historial disponible</div></div>';
+    html+='</div>';
+  }else{
+    html+='<div class="sec-body"><div class="empty-state"><i class="ti ti-calendar-off" aria-hidden="true"></i>Sin historial disponible</div></div>';
   }
-  html += '</div>';
+  html+='</div>';
 
-  // CTA
-  html += '<div class="cta-card">'
-    + '<p>Con este diagnóstico, desde <strong>Estudio Tango</strong> podemos diseñar tu plan de regularización y acompañarte hasta que tu situación crediticia quede <strong>limpia y activa</strong>.</p>'
-    + '<div class="cta-btns">'
-    + '<button class="btn-primary">Iniciar recuperación</button>'
-    + '<button class="btn-secondary">Hablar con un asesor</button>'
-    + '</div>'
-    + '</div>';
+  html+='<div class="cta-card">'
+    +'<p>Con este diagnóstico, desde <strong>Estudio Tango</strong> podemos diseñar tu plan de regularización y acompañarte hasta que tu situación crediticia quede <strong>limpia y activa</strong>.</p>'
+    +'<div class="cta-btns">'
+    +'<button class="btn-p">Iniciar recuperación</button>'
+    +'<button class="btn-s">Autogestión IA</button>'
+    +'</div></div>';
 
-  res.innerHTML = html;
+  res.innerHTML=html;
 }
 
-document.getElementById("cuit").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") consultar();
+document.getElementById("cuit").addEventListener("keydown",function(e){
+  if(e.key==="Enter")consultar();
 });
 </script>
 </body>
