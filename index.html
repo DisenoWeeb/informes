@@ -1,221 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Informe BCRA</title>
-
 <style>
-
-body{
-    font-family:Arial,sans-serif;
-    max-width:1200px;
-    margin:40px auto;
-    padding:20px;
-}
-
-input{
-    padding:10px;
-    width:250px;
-}
-
-button{
-    padding:10px 20px;
-    cursor:pointer;
-}
-
-.card{
-    border:1px solid #ddd;
-    border-radius:8px;
-    padding:15px;
-    margin-top:15px;
-}
-
-.entidad{
-    border-bottom:1px solid #eee;
-    padding:10px 0;
-}
-
-.error{
-    color:red;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-}
-
-th,td{
-    border:1px solid #ddd;
-    padding:8px;
-    text-align:left;
-}
-
-th{
-    background:#f5f5f5;
-}
-
+body { font-family: Arial, sans-serif; max-width: 1200px; margin: 40px auto; padding: 20px; }
+input { padding: 10px; width: 250px; }
+button { padding: 10px 20px; cursor: pointer; }
+.card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 15px; }
+.entidad { border-bottom: 1px solid #eee; padding: 10px 0; }
+.error { color: red; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background: #f5f5f5; }
 </style>
-
 </head>
 <body>
-
 <h1>Consulta BCRA</h1>
-
-<input
-    id="cuit"
-    placeholder="Ingrese CUIT/CUIL"
->
-
-<button onclick="consultar()">
-Consultar
-</button>
-
+<input id="cuit" placeholder="Ingrese CUIT/CUIL">
+<button onclick="consultar()">Consultar</button>
 <div id="resultado"></div>
 
 <script>
+const API = "https://script.google.com/macros/s/AKfycby29NcU3FPBzkdv3l9Cz_eNBgpmLnTNmnOtkqROAxxt4QXi3YzH77AQCXqMXY7pAba-1Q/exec";
 
-const API =
-"https://script.google.com/macros/s/AKfycby29NcU3FPBzkdv3l9Cz_eNBgpmLnTNmnOtkqROAxxt4QXi3YzH77AQCXqMXY7pAba-1Q/exec";
-
-async function consultar(){
-
-    const cuit =
-        document.getElementById("cuit").value.trim();
-
-    const resultado =
-        document.getElementById("resultado");
-
+async function consultar() {
+    const cuit = document.getElementById("cuit").value.trim();
+    const resultado = document.getElementById("resultado");
     resultado.innerHTML = "Consultando...";
 
-    try{
+    try {
+        const response = await fetch(`${API}?cuit=${cuit}`);
+        const json = await response.json();
 
-        const response =
-            await fetch(`${API}?cuit=${cuit}`);
-
-        const json =
-    await response.json();
-
-console.log(json);
-
-const actual = json.actual.results;
-const historica = json.historica.results;
-
-console.log(actual.denominacion);
-console.log(historica.periodos.length);
-
-        if(!json.ok){
-
-            resultado.innerHTML =
-                `<p class="error">${json.error}</p>`;
-
+        // 1. Primero verificar si la respuesta es ok
+        if (!json.ok) {
+            resultado.innerHTML = `<p class="error">${json.error}</p>`;
             return;
         }
 
-        const data =
-            json.actual.results;
+        // 2. Extraer datos UNA SOLA VEZ, con nombres distintos
+        const data = json.actual.results;
+        const historica = json.historica.results;  // ← solo acá, sin repetir
 
-        const historica =
-            json.historica.results;
+        console.log("Denominación:", data.denominacion);
+        console.log("Períodos históricos:", historica.periodos.length);
 
         let html = "";
 
+        // Encabezado
         html += `
         <div class="card">
             <h2>${data.denominacion}</h2>
             <p><strong>CUIT:</strong> ${data.identificacion}</p>
-        </div>
-        `;
+        </div>`;
 
-        html += `
-        <div class="card">
-            <h2>Deuda Actual</h2>
-        `;
-
+        // Deuda actual
+        html += `<div class="card"><h2>Deuda Actual</h2>`;
         data.periodos.forEach(periodo => {
-
-            html += `
-            <h3>Periodo ${periodo.periodo}</h3>
-            `;
-
+            html += `<h3>Periodo ${periodo.periodo}</h3>`;
             periodo.entidades.forEach(entidad => {
-
                 html += `
                 <div class="entidad">
-
                     <strong>${entidad.entidad}</strong><br>
-
-                    Situación:
-                    ${entidad.situacion}<br>
-
-                    Monto:
-                    $${entidad.monto.toLocaleString("es-AR")}<br>
-
-                    Días atraso:
-                    ${entidad.diasAtrasoPago}
-
-                </div>
-                `;
-
+                    Situación: ${entidad.situacion}<br>
+                    Monto: $${entidad.monto.toLocaleString("es-AR")}<br>
+                    Días atraso: ${entidad.diasAtrasoPago}
+                </div>`;
             });
-
         });
-
         html += `</div>`;
 
+        // Historial
         html += `
         <div class="card">
-
-            <h2>Historial</h2>
-
+            <h2>Historial (últimos 24 meses)</h2>
             <table>
-
                 <tr>
                     <th>Periodo</th>
                     <th>Entidad</th>
                     <th>Situación</th>
                     <th>Monto</th>
-                </tr>
-        `;
+                </tr>`;
 
         historica.periodos.forEach(periodo => {
-
             periodo.entidades.forEach(entidad => {
-
                 html += `
                 <tr>
                     <td>${periodo.periodo}</td>
                     <td>${entidad.entidad}</td>
                     <td>${entidad.situacion}</td>
                     <td>$${entidad.monto.toLocaleString("es-AR")}</td>
-                </tr>
-                `;
-
+                </tr>`;
             });
-
         });
 
-        html += `
-            </table>
-        </div>
-        `;
-
+        html += `</table></div>`;
         resultado.innerHTML = html;
 
+    } catch (err) {
+        resultado.innerHTML = `<p class="error">Error: ${err.message}</p>`;
     }
-    catch(err){
-
-        resultado.innerHTML =
-            `<p class="error">${err}</p>`;
-
-    }
-
 }
-
 </script>
-
 </body>
 </html>
