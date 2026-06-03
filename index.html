@@ -11,7 +11,7 @@
 
 body{
     font-family:Arial,sans-serif;
-    max-width:1000px;
+    max-width:1200px;
     margin:40px auto;
     padding:20px;
 }
@@ -38,6 +38,10 @@ button{
     padding:10px 0;
 }
 
+.error{
+    color:red;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
@@ -45,13 +49,13 @@ table{
 }
 
 th,td{
-    border:1px solid #ccc;
-    padding:6px;
+    border:1px solid #ddd;
+    padding:8px;
     text-align:left;
 }
 
-.error{
-    color:red;
+th{
+    background:#f5f5f5;
 }
 
 </style>
@@ -62,8 +66,9 @@ th,td{
 <h1>Consulta BCRA</h1>
 
 <input
-id="cuit"
-placeholder="Ingrese CUIT/CUIL">
+    id="cuit"
+    placeholder="Ingrese CUIT/CUIL"
+>
 
 <button onclick="consultar()">
 Consultar
@@ -79,115 +84,124 @@ const API =
 async function consultar(){
 
     const cuit =
-      document.getElementById("cuit").value.trim();
+        document.getElementById("cuit").value.trim();
 
     const resultado =
-      document.getElementById("resultado");
+        document.getElementById("resultado");
 
     resultado.innerHTML = "Consultando...";
 
     try{
 
-      const response =
-        await fetch(`${API}?cuit=${cuit}`);
+        const response =
+            await fetch(`${API}?cuit=${cuit}`);
 
-      const json =
-        await response.json();
+        const json =
+            await response.json();
 
-      if(!json.ok){
+        if(!json.ok){
 
-        resultado.innerHTML =
-          `<p class="error">${json.error}</p>`;
+            resultado.innerHTML =
+                `<p class="error">${json.error}</p>`;
 
-        return;
-      }
+            return;
+        }
 
-      let html = "";
+        const data =
+            json.actual.results;
 
-      const actual =
-        json.actual.results;
+        const historica =
+            json.historica.results;
 
-      html += `
-      <div class="card">
-        <h2>${actual.denominacion}</h2>
-        <p><strong>CUIT:</strong> ${actual.identificacion}</p>
-      </div>
-      `;
-
-      actual.periodos.forEach(periodo => {
+        let html = "";
 
         html += `
         <div class="card">
-          <h3>Periodo ${periodo.periodo}</h3>
+            <h2>${data.denominacion}</h2>
+            <p><strong>CUIT:</strong> ${data.identificacion}</p>
+        </div>
         `;
 
-        periodo.entidades.forEach(entidad => {
+        html += `
+        <div class="card">
+            <h2>Deuda Actual</h2>
+        `;
 
-          html += `
-          <div class="entidad">
+        data.periodos.forEach(periodo => {
 
-            <strong>${entidad.entidad}</strong><br>
+            html += `
+            <h3>Periodo ${periodo.periodo}</h3>
+            `;
 
-            Situación:
-            ${entidad.situacion}<br>
+            periodo.entidades.forEach(entidad => {
 
-            Monto:
-            $${entidad.monto.toLocaleString("es-AR")}<br>
+                html += `
+                <div class="entidad">
 
-            Días atraso:
-            ${entidad.diasAtrasoPago}
+                    <strong>${entidad.entidad}</strong><br>
 
-          </div>
-          `;
+                    Situación:
+                    ${entidad.situacion}<br>
+
+                    Monto:
+                    $${entidad.monto.toLocaleString("es-AR")}<br>
+
+                    Días atraso:
+                    ${entidad.diasAtrasoPago}
+
+                </div>
+                `;
+
+            });
+
         });
 
         html += `</div>`;
 
-      });
-
-      if(
-        json.historica &&
-        json.historica.results &&
-        json.historica.results.length
-      ){
-
         html += `
         <div class="card">
-          <h2>Historial Crediticio</h2>
+
+            <h2>Historial</h2>
+
+            <table>
+
+                <tr>
+                    <th>Periodo</th>
+                    <th>Entidad</th>
+                    <th>Situación</th>
+                    <th>Monto</th>
+                </tr>
         `;
 
-        json.historica.results.forEach(item => {
+        historica.periodos.forEach(periodo => {
 
-          html += `
-          <table>
-            <tr>
-              <th>Periodo</th>
-              <th>Situación</th>
-              <th>Monto</th>
-            </tr>
+            periodo.entidades.forEach(entidad => {
 
-            <tr>
-              <td>${item.periodo}</td>
-              <td>${item.situacion}</td>
-              <td>$${Number(item.monto || 0).toLocaleString("es-AR")}</td>
-            </tr>
-          </table>
+                html += `
+                <tr>
+                    <td>${periodo.periodo}</td>
+                    <td>${entidad.entidad}</td>
+                    <td>${entidad.situacion}</td>
+                    <td>$${entidad.monto.toLocaleString("es-AR")}</td>
+                </tr>
+                `;
 
-          <br>
-          `;
+            });
 
         });
 
-        html += `</div>`;
-      }
+        html += `
+            </table>
+        </div>
+        `;
 
-      resultado.innerHTML = html;
+        resultado.innerHTML = html;
 
     }
     catch(err){
 
-      resultado.innerHTML =
-        `<p class="error">${err}</p>`;
+        resultado.innerHTML =
+            `<p class="error">${err}</p>`;
 
     }
 
