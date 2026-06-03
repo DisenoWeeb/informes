@@ -25,27 +25,30 @@ th { background: #f5f5f5; }
 <script>
 const API = "https://script.google.com/macros/s/AKfycby29NcU3FPBzkdv3l9Cz_eNBgpmLnTNmnOtkqROAxxt4QXi3YzH77AQCXqMXY7pAba-1Q/exec";
 
-async function consultar() {
+function consultar() {
     const cuit = document.getElementById("cuit").value.trim();
     const resultado = document.getElementById("resultado");
     resultado.innerHTML = "Consultando...";
 
-    try {
-        const response = await fetch(`${API}?cuit=${cuit}`);
-        const json = await response.json();
+    // Limpiar script anterior si existe
+    const viejo = document.getElementById("script-bcra");
+    if (viejo) viejo.remove();
 
-        // 1. Primero verificar si la respuesta es ok
+    // Nombre de callback único para evitar conflictos
+    const callbackName = "bcraCallback_" + Date.now();
+
+    // Función que recibe la respuesta
+    window[callbackName] = function(json) {
+        delete window[callbackName];
+        document.getElementById("script-bcra")?.remove();
+
         if (!json.ok) {
             resultado.innerHTML = `<p class="error">${json.error}</p>`;
             return;
         }
 
-        // 2. Extraer datos UNA SOLA VEZ, con nombres distintos
         const data = json.actual.results;
-        const historica = json.historica.results;  // ← solo acá, sin repetir
-
-        console.log("Denominación:", data.denominacion);
-        console.log("Períodos históricos:", historica.periodos.length);
+        const historica = json.historica.results;
 
         let html = "";
 
@@ -58,18 +61,22 @@ async function consultar() {
 
         // Deuda actual
         html += `<div class="card"><h2>Deuda Actual</h2>`;
-        data.periodos.forEach(periodo => {
-            html += `<h3>Periodo ${periodo.periodo}</h3>`;
-            periodo.entidades.forEach(entidad => {
-                html += `
-                <div class="entidad">
-                    <strong>${entidad.entidad}</strong><br>
-                    Situación: ${entidad.situacion}<br>
-                    Monto: $${entidad.monto.toLocaleString("es-AR")}<br>
-                    Días atraso: ${entidad.diasAtrasoPago}
-                </div>`;
+        if (data.periodos && data.periodos.length > 0) {
+            data.periodos.forEach(periodo => {
+                html += `<h3>Periodo ${periodo.periodo}</h3>`;
+                periodo.entidades.forEach(entidad => {
+                    html += `
+                    <div class="entidad">
+                        <strong>${entidad.entidad}</strong><br>
+                        Situación: ${entidad.situacion}<br>
+                        Monto: $${entidad.monto.toLocaleString("es-AR")}<br>
+                        Días atraso: ${entidad.diasAtrasoPago}
+                    </div>`;
+                });
             });
-        });
+        } else {
+            html += `<p>Sin deudas actuales.</p>`;
+        }
         html += `</div>`;
 
         // Historial
@@ -84,24 +91,34 @@ async function consultar() {
                     <th>Monto</th>
                 </tr>`;
 
-        historica.periodos.forEach(periodo => {
-            periodo.entidades.forEach(entidad => {
-                html += `
-                <tr>
-                    <td>${periodo.periodo}</td>
-                    <td>${entidad.entidad}</td>
-                    <td>${entidad.situacion}</td>
-                    <td>$${entidad.monto.toLocaleString("es-AR")}</td>
-                </tr>`;
+        if (historica.periodos && historica.periodos.length > 0) {
+            historica.periodos.forEach(periodo => {
+                periodo.entidades.forEach(entidad => {
+                    html += `
+                    <tr>
+                        <td>${periodo.periodo}</td>
+                        <td>${entidad.entidad}</td>
+                        <td>${entidad.situacion}</td>
+                        <td>$${entidad.monto.toLocaleString("es-AR")}</td>
+                    </tr>`;
+                });
             });
-        });
+        } else {
+            html += `<tr><td colspan="4">Sin historial disponible.</td></tr>`;
+        }
 
         html += `</table></div>`;
         resultado.innerHTML = html;
+    };
 
-    } catch (err) {
-        resultado.innerHTML = `<p class="error">Error: ${err.message}</p>`;
-    }
+    // Inyectar script con callback
+    const script = document.createElement("script");
+    script.id = "script-bcra";
+    script.src = `${API}?cuit=${cuit}&callback=${callbackName}`;
+    script.onerror = function() {
+        resultado.innerHTML = `<p class="error">Error al conectar con el servidor.</p>`;
+    };
+    document.body.appendChild(script);
 }
 </script>
 </body>
