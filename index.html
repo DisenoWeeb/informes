@@ -97,7 +97,15 @@ async function consultar(){
             await fetch(`${API}?cuit=${cuit}`);
 
         const json =
-            await response.json();
+    await response.json();
+
+console.log(json);
+
+const actual = json.actual.results;
+const historica = json.historica.results;
+
+console.log(actual.denominacion);
+console.log(historica.periodos.length);
 
         if(!json.ok){
 
