@@ -1,0 +1,964 @@
+
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+
+  .hero {
+    background: linear-gradient(135deg, #042C53 0%, #185FA5 60%, #378ADD 100%);
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem 2rem 2rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: 40%;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15);
+    border: 0.5px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    margin-bottom: 1rem;
+  }
+  .hero h1 { font-size: 26px; font-weight: 500; margin-bottom: 8px; line-height: 1.3; }
+  .hero p { font-size: 14px; opacity: 0.85; line-height: 1.6; max-width: 500px; }
+  .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+  .hero-pill {
+    background: rgba(255,255,255,0.12);
+    border: 0.5px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .steps-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    background: var(--color-background-secondary);
+  }
+  .step-btn {
+    flex: 1;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border-right: 0.5px solid var(--color-border-tertiary);
+    transition: background 0.15s;
+    position: relative;
+  }
+  .step-btn:last-child { border-right: none; }
+  .step-btn:hover { background: var(--color-background-primary); }
+  .step-btn.active {
+    background: var(--color-background-primary);
+    box-shadow: inset 0 -2px 0 #185FA5;
+  }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+  .step-btn.active .step-num {
+    background: #185FA5;
+    border-color: #185FA5;
+    color: white;
+  }
+  .step-btn.done .step-num {
+    background: #0F6E56;
+    border-color: #0F6E56;
+    color: white;
+  }
+  .step-label { font-size: 10px; color: var(--color-text-secondary); text-align: center; line-height: 1.3; }
+  .step-btn.active .step-label { color: #185FA5; font-weight: 500; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-size: 16px; font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .cuit-form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cuit-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    letter-spacing: 1px;
+  }
+  .cuit-input:focus { outline: 2px solid #185FA5; outline-offset: 1px; }
+  .btn-primary {
+    padding: 10px 20px;
+    background: #185FA5;
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: #0C447C; }
+  .btn-primary:disabled { background: var(--color-background-secondary); color: var(--color-text-tertiary); cursor: not-allowed; }
+
+  .info-note {
+    display: flex; gap: 8px; align-items: flex-start;
+    background: var(--color-background-info);
+    border: 0.5px solid var(--color-border-info);
+    border-radius: var(--border-radius-md);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--color-text-info);
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  #resultado-bcra { display: none; }
+
+  .calif-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .calif-1 { background: #EAF3DE; color: #3B6D11; }
+  .calif-2 { background: #FAEEDA; color: #854F0B; }
+  .calif-3 { background: #FAECE7; color: #993C1D; }
+  .calif-4 { background: #FCEBEB; color: #A32D2D; }
+  .calif-5 { background: #FCEBEB; color: #501313; }
+
+  .deuda-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    font-size: 13px;
+  }
+  .deuda-row:last-child { border-bottom: none; }
+  .deuda-entidad { color: var(--color-text-primary); font-weight: 500; }
+  .deuda-meta { color: var(--color-text-secondary); font-size: 12px; margin-top: 2px; }
+  .deuda-monto { text-align: right; }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+  .metric-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 12px;
+    text-align: center;
+  }
+  .metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .ai-analysis {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+  }
+  .ai-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 1rem;
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .ai-icon {
+    width: 32px; height: 32px;
+    background: #E6F1FB;
+    border-radius: var(--border-radius-md);
+    display: flex; align-items: center; justify-content: center;
+    color: #185FA5;
+  }
+  .ai-text { font-size: 14px; line-height: 1.7; color: var(--color-text-primary); }
+  .ai-text strong { font-weight: 500; }
+
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .action-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .action-card:hover { border-color: #185FA5; }
+  .action-icon { font-size: 20px; margin-bottom: 8px; color: #185FA5; }
+  .action-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .action-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+
+  .reclamo-steps { counter-reset: reclamo; }
+  .reclamo-step {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .reclamo-step:last-child { border-bottom: none; }
+  .reclamo-num {
+    min-width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #E6F1FB;
+    color: #185FA5;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  .reclamo-content {}
+  .reclamo-title { font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+  .reclamo-desc { color: var(--color-text-secondary); }
+  .reclamo-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: #185FA5;
+    font-size: 12px;
+    text-decoration: none;
+    margin-top: 4px;
+  }
+
+  .score-bar-wrap { margin: 1rem 0; }
+  .score-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .score-bar {
+    height: 10px;
+    border-radius: 5px;
+    background: var(--color-background-secondary);
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.8s ease;
+  }
+
+  .error-box {
+    background: var(--color-background-danger);
+    border: 0.5px solid var(--color-border-danger);
+    border-radius: var(--border-radius-md);
+    padding: 12px 16px;
+    color: var(--color-text-danger);
+    font-size: 13px;
+    display: none;
+  }
+
+  .iframe-container {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    height: 420px;
+    background: var(--color-background-secondary);
+    display: flex;
+    flex-direction: column;
+  }
+  .iframe-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #042C53;
+    color: white;
+    font-size: 13px;
+  }
+  .iframe-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .iframe-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .bcra-logo-preview {
+    width: 60px; height: 60px;
+    border-radius: var(--border-radius-lg);
+    background: #042C53;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: white;
+  }
+  .open-bcra-btn {
+    padding: 10px 20px;
+    background: #042C53;
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 500;
+  }
+  .open-bcra-btn:hover { background: #185FA5; }
+
+  .cheques-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .cheques-table th {
+    text-align: left;
+    padding: 8px;
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .cheques-table td {
+    padding: 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .tag-positivo { background: #EAF3DE; color: #3B6D11; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .tag-negativo { background: #FCEBEB; color: #A32D2D; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .tag-neutro { background: #FAEEDA; color: #854F0B; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
+  .nav-btns { display: flex; justify-content: space-between; margin-top: 1rem; }
+  .btn-sec {
+    padding: 9px 18px;
+    background: transparent;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-sec:hover { background: var(--color-background-secondary); }
+</style>
+
+<h2 class="sr-only">CréditoLimpio — Asesoramiento gratuito sobre tu situación crediticia en el BCRA</h2>
+
+<div class="hero">
+  <div class="hero-badge">
+    <i class="ti ti-shield-check" aria-hidden="true"></i>
+    Servicio gratuito y sin registro
+  </div>
+  <h1>Conocé y mejorá tu situación crediticia</h1>
+  <p>Consultamos el informe oficial del Banco Central de la República Argentina, lo analizamos con IA y te explicamos exactamente qué hacer — sin costo y sin salir de acá.</p>
+  <div class="hero-pills">
+    <span class="hero-pill"><i class="ti ti-building-bank" aria-hidden="true"></i> Datos oficiales BCRA</span>
+    <span class="hero-pill"><i class="ti ti-robot" aria-hidden="true"></i> Análisis con IA</span>
+    <span class="hero-pill"><i class="ti ti-lock-open" aria-hidden="true"></i> 100% gratuito</span>
+    <span class="hero-pill"><i class="ti ti-eye-off" aria-hidden="true"></i> Sin registrarte</span>
+  </div>
+</div>
+
+<div class="steps-nav">
+  <button class="step-btn active" onclick="goStep(1)" id="nav1">
+    <span class="step-num">1</span>
+    <span class="step-label">Consultar BCRA</span>
+  </button>
+  <button class="step-btn" onclick="goStep(2)" id="nav2">
+    <span class="step-num">2</span>
+    <span class="step-label">Ver informe</span>
+  </button>
+  <button class="step-btn" onclick="goStep(3)" id="nav3">
+    <span class="step-num">3</span>
+    <span class="step-label">Análisis IA</span>
+  </button>
+  <button class="step-btn" onclick="goStep(4)" id="nav4">
+    <span class="step-num">4</span>
+    <span class="step-label">Plan de acción</span>
+  </button>
+  <button class="step-btn" onclick="goStep(5)" id="nav5">
+    <span class="step-num">5</span>
+    <span class="step-label">Reclamos</span>
+  </button>
+</div>
+
+<!-- PASO 1: Consultar CUIT -->
+<div class="panel active" id="panel1">
+  <div class="card">
+    <p class="section-title">Ingresá tu CUIT / CUIL / CDI</p>
+    <p class="section-sub">Con tu número de identificación fiscal consultamos el informe oficial del BCRA. Es público, gratuito y no requiere ningún tipo de registro.</p>
+    <div class="cuit-form">
+      <input class="cuit-input" type="text" id="cuit-input" placeholder="20-12345678-9" maxlength="13" oninput="formatCuit(this)" />
+      <button class="btn-primary" id="btn-consultar" onclick="consultarBCRA()">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        Consultar
+      </button>
+    </div>
+    <div class="error-box" id="error-cuit">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+      <span id="error-msg"></span>
+    </div>
+    <div class="info-note">
+      <i class="ti ti-info-circle" style="flex-shrink:0; margin-top:1px" aria-hidden="true"></i>
+      <span>La consulta se realiza directamente en la API oficial del BCRA (<strong>api.bcra.gob.ar</strong>). Los datos son suministrados por las entidades financieras y su difusión no implica conformidad por parte del Banco Central.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title" style="margin-bottom:10px">¿Qué incluye el informe del BCRA?</p>
+    <div class="action-grid">
+      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
+        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
+        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Deudas con bancos</div>
+        <div style="font-size:11px; color:var(--color-text-secondary);">Préstamos, tarjetas y financiaciones de entidades reguladas</div>
+      </div>
+      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
+        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-credit-card" aria-hidden="true"></i></div>
+        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Tarjetas y fintech</div>
+        <div style="font-size:11px; color:var(--color-text-secondary);">Emisoras no bancarias de crédito y plataformas P2P</div>
+      </div>
+      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
+        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-file-invoice" aria-hidden="true"></i></div>
+        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Cheques rechazados</div>
+        <div style="font-size:11px; color:var(--color-text-secondary);">Registro de cheques sin fondos o rechazados por otros motivos</div>
+      </div>
+      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
+        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-shield" aria-hidden="true"></i></div>
+        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Garantías SGR/FGP</div>
+        <div style="font-size:11px; color:var(--color-text-secondary);">Sociedades de garantía recíproca y fondos de garantía públicos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="iframe-container">
+    <div class="iframe-header">
+      <div class="iframe-dots">
+        <div class="dot" style="background:#E24B4A"></div>
+        <div class="dot" style="background:#EF9F27"></div>
+        <div class="dot" style="background:#639922"></div>
+      </div>
+      <span style="opacity:0.7; font-size:11px;">bcra.gob.ar — Central de Deudores</span>
+    </div>
+    <div class="iframe-body">
+      <div class="bcra-logo-preview">BCRA</div>
+      <p style="font-size:13px; color:var(--color-text-secondary); max-width:280px; line-height:1.5;">
+        El sitio oficial del BCRA no puede incrustarse aquí por restricciones de seguridad. Podés consultarlo directamente haciendo clic abajo — es la misma consulta que haremos por API.
+      </p>
+      <button class="open-bcra-btn" onclick="openLink('https://www.bcra.gob.ar/situacion-crediticia/')">
+        <i class="ti ti-external-link" aria-hidden="true"></i>
+        Abrir Central de Deudores BCRA
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 2: Ver informe -->
+<div class="panel" id="panel2">
+  <div id="cargando-informe" style="text-align:center; padding:2rem; display:none;">
+    <div style="font-size:40px; color:#185FA5; margin-bottom:12px;"><i class="ti ti-loader-2" aria-hidden="true"></i></div>
+    <p style="font-size:14px; color:var(--color-text-secondary);">Consultando la API oficial del BCRA...</p>
+  </div>
+
+  <div id="resultado-bcra">
+    <div class="card" style="border-color:#185FA5; margin-bottom:1rem;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div>
+          <p class="section-title" style="margin-bottom:2px;" id="res-cuit-label">CUIT: —</p>
+          <p style="font-size:12px; color:var(--color-text-secondary);" id="res-fecha">Consultado: —</p>
+        </div>
+        <span class="calif-badge" id="calif-badge">—</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-labels">
+          <span>Situación 1 (Normal)</span>
+          <span>Situación 5 (Irrecuperable)</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-fill" id="score-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">Entidades informantes</div>
+        <div class="metric-value" id="res-entidades">—</div>
+        <div class="metric-sub">registros</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Deuda total aprox.</div>
+        <div class="metric-value" id="res-deuda">—</div>
+        <div class="metric-sub">en miles $</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cheques rechazados</div>
+        <div class="metric-value" id="res-cheques">—</div>
+        <div class="metric-sub">registros</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="section-title" style="margin-bottom:12px;">Detalle por entidad</p>
+      <div id="deudas-lista"></div>
+    </div>
+
+    <div class="card" id="card-cheques" style="display:none;">
+      <p class="section-title" style="margin-bottom:12px;">Cheques rechazados</p>
+      <div id="cheques-lista"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-sec" onclick="goStep(1)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
+      <button class="btn-primary" onclick="iniciarAnalisis()"><i class="ti ti-robot" aria-hidden="true"></i> Analizar con IA</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 3: Análisis IA -->
+<div class="panel" id="panel3">
+  <div id="ai-loading" style="text-align:center; padding:2.5rem; display:none;">
+    <div style="font-size:40px; color:#185FA5; margin-bottom:12px;"><i class="ti ti-brain" aria-hidden="true"></i></div>
+    <p style="font-size:14px; color:var(--color-text-secondary);" id="ai-loading-msg">Analizando tu situación crediticia...</p>
+  </div>
+  <div id="ai-resultado" style="display:none;">
+    <div class="ai-analysis">
+      <div class="ai-header">
+        <div class="ai-icon"><i class="ti ti-robot" aria-hidden="true"></i></div>
+        <div>
+          <p style="font-weight:500; font-size:14px; margin:0;">Análisis de situación crediticia</p>
+          <p style="font-size:12px; color:var(--color-text-secondary); margin:0;">Generado por inteligencia artificial a partir de datos oficiales BCRA</p>
+        </div>
+      </div>
+      <div class="ai-text" id="ai-texto"></div>
+    </div>
+    <div class="nav-btns" style="margin-top:1rem;">
+      <button class="btn-sec" onclick="goStep(2)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
+      <button class="btn-primary" onclick="goStep(4)">Ver plan de acción <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 4: Plan de acción -->
+<div class="panel" id="panel4">
+  <div class="card">
+    <p class="section-title">Tu plan para mejorar la calificación</p>
+    <p class="section-sub">Pasos concretos según tu situación real, ordenados por impacto.</p>
+    <div id="plan-acciones"></div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-sec" onclick="goStep(3)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
+    <button class="btn-primary" onclick="goStep(5)">Reclamos formales <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+  </div>
+</div>
+
+<!-- PASO 5: Reclamos -->
+<div class="panel" id="panel5">
+  <div class="card">
+    <p class="section-title">¿Hay información incorrecta en el informe?</p>
+    <p class="section-sub">Si encontrás datos que no te corresponden, tenés derecho a reclamar gratuitamente. Acá te explicamos el proceso completo.</p>
+
+    <div class="reclamo-steps">
+      <div class="reclamo-step">
+        <div class="reclamo-num">1</div>
+        <div class="reclamo-content">
+          <div class="reclamo-title">Identificá el error</div>
+          <div class="reclamo-desc">Anotá el nombre de la entidad que informó el dato incorrecto, el período y el monto. Esta información está en el informe que obtuviste en el paso anterior.</div>
+        </div>
+      </div>
+      <div class="reclamo-step">
+        <div class="reclamo-num">2</div>
+        <div class="reclamo-content">
+          <div class="reclamo-title">Contactá directamente a la entidad</div>
+          <div class="reclamo-desc">Primero debés reclamar ante la entidad que informó el dato erróneo (banco, fintech, etc.). Enviá una nota formal o carta documento exigiendo la corrección en un plazo de 10 días hábiles.</div>
+        </div>
+      </div>
+      <div class="reclamo-step">
+        <div class="reclamo-num">3</div>
+        <div class="reclamo-content">
+          <div class="reclamo-title">Reclamo ante el BCRA si no hay respuesta</div>
+          <div class="reclamo-desc">Si la entidad no corrigió el dato en el plazo, podés escalar el reclamo al Banco Central. El trámite es 100% gratuito.</div>
+          <a class="reclamo-link" href="https://www.bcra.gob.ar/BCRAyVos/Sistema_de_consultas_y_reclamos.asp" target="_blank">
+            <i class="ti ti-external-link" aria-hidden="true"></i> Sistema de reclamos BCRA
+          </a>
+        </div>
+      </div>
+      <div class="reclamo-step">
+        <div class="reclamo-num">4</div>
+        <div class="reclamo-content">
+          <div class="reclamo-title">Seguí tu reclamo en línea</div>
+          <div class="reclamo-desc">El BCRA te asigna un número de reclamo con el que podés hacer seguimiento por la web sin necesidad de ir a ninguna oficina.</div>
+        </div>
+      </div>
+      <div class="reclamo-step">
+        <div class="reclamo-num">5</div>
+        <div class="reclamo-content">
+          <div class="reclamo-title">Derechos ARCO (datos personales)</div>
+          <div class="reclamo-desc">Como titular de los datos tenés derechos de Acceso, Rectificación, Cancelación y Oposición. Si el BCRA no resuelve, podés recurrir a la Agencia de Acceso a la Información Pública.</div>
+          <a class="reclamo-link" href="https://www.argentina.gob.ar/aaip" target="_blank">
+            <i class="ti ti-external-link" aria-hidden="true"></i> Agencia de Acceso a la Información Pública
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title" style="margin-bottom:12px;">Preguntas frecuentes</p>
+    <div id="faqs"></div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn-sec" onclick="goStep(4)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
+    <button class="btn-primary" onclick="goStep(1)"><i class="ti ti-refresh" aria-hidden="true"></i> Nueva consulta</button>
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let bcraData = null;
+  let aiAnalysis = null;
+
+  const CALIFMAP = {
+    1: { label: 'Situación Normal', cls: 'calif-1', pct: 10, color: '#639922' },
+    2: { label: 'Seguimiento especial', cls: 'calif-2', pct: 35, color: '#EF9F27' },
+    3: { label: 'Con problemas', cls: 'calif-3', pct: 60, color: '#D85A30' },
+    4: { label: 'Alto riesgo de insolvencia', cls: 'calif-4', pct: 80, color: '#E24B4A' },
+    5: { label: 'Irrecuperable', cls: 'calif-5', pct: 100, color: '#A32D2D' },
+  };
+
+  function formatCuit(input) {
+    let val = input.value.replace(/\D/g,'');
+    if (val.length > 2 && val.length <= 10) val = val.slice(0,2)+'-'+val.slice(2);
+    if (val.length > 11) val = val.slice(0,11)+'-'+val.slice(11);
+    input.value = val.slice(0,13);
+  }
+
+  function rawCuit(v) { return v.replace(/\D/g,''); }
+
+  function goStep(n) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel'+n).classList.add('active');
+    for(let i=1;i<=5;i++){
+      const btn = document.getElementById('nav'+i);
+      btn.classList.remove('active','done');
+      if(i < n) btn.classList.add('done');
+      if(i === n) btn.classList.add('active');
+    }
+    currentStep = n;
+  }
+
+  async function consultarBCRA() {
+    const inputEl = document.getElementById('cuit-input');
+    const cuit = rawCuit(inputEl.value);
+    const errBox = document.getElementById('error-cuit');
+    const errMsg = document.getElementById('error-msg');
+    errBox.style.display = 'none';
+
+    if (cuit.length < 10 || cuit.length > 11) {
+      errMsg.textContent = 'Ingresá un CUIT/CUIL válido (10 u 11 dígitos).';
+      errBox.style.display = 'flex';
+      return;
+    }
+
+    const btn = document.getElementById('btn-consultar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span> Consultando...';
+
+    goStep(2);
+    document.getElementById('cargando-informe').style.display = 'block';
+    document.getElementById('resultado-bcra').style.display = 'none';
+
+    try {
+      const [resDeudas, resCheques] = await Promise.all([
+        fetch(`https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/${cuit}`),
+        fetch(`https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/Historicas/${cuit}`)
+      ]);
+
+      let deudaData = null, chequesData = null;
+
+      if (resDeudas.ok) {
+        const json = await resDeudas.json();
+        deudaData = json.results || json;
+      }
+
+      if (resCheques.ok) {
+        try { chequesData = await resCheques.json(); } catch(e){}
+      }
+
+      renderInforme(cuit, deudaData, chequesData);
+
+    } catch(e) {
+      document.getElementById('cargando-informe').style.display = 'none';
+      renderInformeDemoAnterior(cuit, e);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-search" aria-hidden="true"></i> Consultar';
+    }
+  }
+
+  function renderInforme(cuit, data, chequesRaw) {
+    document.getElementById('cargando-informe').style.display = 'none';
+    document.getElementById('resultado-bcra').style.display = 'block';
+
+    const ahora = new Date().toLocaleDateString('es-AR', {day:'2-digit',month:'long',year:'numeric'});
+    document.getElementById('res-cuit-label').textContent = 'CUIT: ' + cuit;
+    document.getElementById('res-fecha').textContent = 'Consultado: ' + ahora;
+
+    let periodos = [];
+    let peorCalif = 1;
+    let deudaTotal = 0;
+
+    if (data && data.periodos) periodos = data.periodos;
+    else if (data && Array.isArray(data)) periodos = data;
+
+    let entidadesList = [];
+    periodos.forEach(per => {
+      if (per.entidades) per.entidades.forEach(ent => {
+        if (ent.situacion > peorCalif) peorCalif = ent.situacion;
+        deudaTotal += (ent.monto || 0);
+        entidadesList.push({...ent, periodo: per.periodo});
+      });
+    });
+
+    const califInfo = CALIFMAP[peorCalif] || CALIFMAP[1];
+    const badgeEl = document.getElementById('calif-badge');
+    badgeEl.textContent = califInfo.label;
+    badgeEl.className = 'calif-badge ' + califInfo.cls;
+
+    const fillEl = document.getElementById('score-fill');
+    fillEl.style.background = califInfo.color;
+    setTimeout(()=>{ fillEl.style.width = califInfo.pct+'%'; }, 100);
+
+    document.getElementById('res-entidades').textContent = entidadesList.length || '0';
+    document.getElementById('res-deuda').textContent = deudaTotal > 0 ? '$'+Math.round(deudaTotal).toLocaleString('es-AR') : '—';
+
+    const listaEl = document.getElementById('deudas-lista');
+    if (entidadesList.length === 0) {
+      listaEl.innerHTML = '<div style="padding:1.5rem; text-align:center; color:var(--color-text-secondary); font-size:13px;"><i class="ti ti-check-circle" style="font-size:24px; color:#639922; display:block; margin-bottom:8px;"></i>Sin deudas registradas en el período actual.</div>';
+    } else {
+      listaEl.innerHTML = entidadesList.slice(0,8).map(e => {
+        const c = CALIFMAP[e.situacion] || CALIFMAP[1];
+        return `<div class="deuda-row">
+          <div>
+            <div class="deuda-entidad">${e.entidad || 'Entidad desconocida'}</div>
+            <div class="deuda-meta">Período: ${e.periodo || '—'} · Situación: ${e.situacion || 1}</div>
+          </div>
+          <div class="deuda-monto">
+            <div style="font-size:13px; font-weight:500;">${e.monto ? '$'+Math.round(e.monto).toLocaleString('es-AR') : '—'}</div>
+            <div style="margin-top:3px;"><span class="calif-badge ${c.cls}" style="font-size:10px; padding:2px 8px;">${c.label}</span></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    let cheques = [];
+    if (chequesRaw && chequesRaw.results && chequesRaw.results.cheques) cheques = chequesRaw.results.cheques;
+    document.getElementById('res-cheques').textContent = cheques.length;
+
+    const chequesCard = document.getElementById('card-cheques');
+    if (cheques.length > 0) {
+      chequesCard.style.display = 'block';
+      document.getElementById('cheques-lista').innerHTML = `
+        <table class="cheques-table">
+          <thead><tr><th>N° Cheque</th><th>Monto</th><th>Fecha rechazo</th><th>Motivo</th></tr></thead>
+          <tbody>${cheques.slice(0,5).map(ch=>`<tr>
+            <td>${ch.nroCheque||'—'}</td>
+            <td>$${ch.monto?Math.round(ch.monto).toLocaleString('es-AR'):'—'}</td>
+            <td>${ch.fechaRechazo||'—'}</td>
+            <td>${ch.motivoRechazo||'—'}</td>
+          </tr>`).join('')}</tbody>
+        </table>`;
+    } else {
+      chequesCard.style.display = 'none';
+    }
+
+    bcraData = { cuit, peorCalif, califInfo, entidades: entidadesList, deudaTotal, cheques, periodos };
+    buildPlanAcciones(bcraData);
+  }
+
+  function renderInformeDemoAnterior(cuit, err) {
+    const demoData = {
+      cuit,
+      periodos: [{
+        periodo: '202503',
+        entidades: [
+          { entidad: 'Banco Nación Argentina', situacion: 1, monto: 450 },
+          { entidad: 'Tarjeta Naranja X', situacion: 2, monto: 85 },
+          { entidad: 'Mercado Crédito', situacion: 1, monto: 120 },
+        ]
+      }]
+    };
+
+    const msgNote = document.createElement('div');
+    msgNote.className = 'info-note';
+    msgNote.style.marginBottom = '1rem';
+    msgNote.innerHTML = `<i class="ti ti-wifi-off" style="flex-shrink:0" aria-hidden="true"></i><span>La API del BCRA no pudo respondernos en este momento (puede ser por CORS en navegador). Mostramos datos de <strong>ejemplo</strong> para que veas cómo funciona el análisis. Para consultar datos reales, usá el botón oficial del BCRA en el paso 1.</span>`;
+    document.getElementById('panel2').insertBefore(msgNote, document.getElementById('resultado-bcra'));
+    renderInforme(cuit, demoData, null);
+  }
+
+  function buildPlanAcciones(data) {
+    const acciones = [];
+    if (data.peorCalif >= 2) {
+      acciones.push({ icon:'ti-coin', title:'Regularizá las deudas en situación 2 o mayor', desc:'Contactá a las entidades con calificación 2 o superior. Muchas aceptan planes de pago o quitas. La situación mejora en el siguiente período que informan.', tag:'Alta prioridad', tagCls:'tag-negativo' });
+    }
+    if (data.cheques.length > 0) {
+      acciones.push({ icon:'ti-file-invoice', title:'Cancelá los cheques rechazados', desc:'Los cheques rechazados son uno de los factores más graves. Podés regularizarlos pagando el importe más intereses al banco girado y solicitando la rehabilitación.', tag:'Crítico', tagCls:'tag-negativo' });
+    }
+    acciones.push({ icon:'ti-clock', title:'Revisá el informe cada 60 días', desc:'Las entidades actualizan la información mensualmente. Verificá que las deudas canceladas figuren como "situación 1" en el informe siguiente. Si no se actualiza, tenés derecho a reclamar.', tag:'Seguimiento', tagCls:'tag-neutro' });
+    acciones.push({ icon:'ti-shield-check', title:'Conservá comprobantes de pago', desc:'Guardá todos los recibos de cancelación. Son tu evidencia ante un reclamo si la entidad no actualiza el dato correctamente.', tag:'Preventivo', tagCls:'tag-positivo' });
+    acciones.push({ icon:'ti-chart-line', title:'Mantené crédito activo en situación normal', desc:'Tener al menos una línea de crédito activa y al día (tarjeta con saldo 0 o préstamo vigente) construye historial positivo. Las entidades valoran el historial de cumplimiento.', tag:'Mejora continua', tagCls:'tag-positivo' });
+    if (data.peorCalif === 1 && data.entidades.length === 0) {
+      acciones.unshift({ icon:'ti-star', title:'¡Sin deudas registradas!', desc:'No tenés deudas informadas al BCRA. Para construir historial crediticio, podés solicitar una tarjeta de crédito con bajo límite y utilizarla regularmente cancelando el resumen completo.', tag:'Excelente', tagCls:'tag-positivo' });
+    }
+
+    document.getElementById('plan-acciones').innerHTML = acciones.map((a,i)=>`
+      <div style="display:flex; gap:12px; padding:12px 0; border-bottom:0.5px solid var(--color-border-tertiary);" id="accion-${i}">
+        <div style="min-width:36px; height:36px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); display:flex; align-items:center; justify-content:center; color:#185FA5; font-size:18px;">
+          <i class="ti ${a.icon}" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span style="font-size:13px; font-weight:500;">${a.title}</span>
+            <span class="${a.tagCls}" style="font-size:10px;">${a.tag}</span>
+          </div>
+          <div style="font-size:12px; color:var(--color-text-secondary); line-height:1.5;">${a.desc}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function iniciarAnalisis() {
+    goStep(3);
+    document.getElementById('ai-loading').style.display = 'block';
+    document.getElementById('ai-resultado').style.display = 'none';
+
+    const msgs = ['Analizando tu situación crediticia...', 'Evaluando cada entidad informante...', 'Preparando recomendaciones personalizadas...'];
+    let mi = 0;
+    const iv = setInterval(()=>{ document.getElementById('ai-loading-msg').textContent = msgs[mi++ % msgs.length]; }, 1500);
+
+    try {
+      const prompt = `Sos un asesor de crédito argentino experto en el sistema financiero regulado por el BCRA. Analizás datos de la Central de Deudores del Banco Central de la República Argentina.
+
+Datos del informe BCRA:
+- CUIT consultado: ${bcraData.cuit}
+- Calificación peor período: ${bcraData.peorCalif} (${bcraData.califInfo.label})
+- Entidades que informaron: ${bcraData.entidades.length}
+- Deuda total estimada (en miles de pesos): ${bcraData.deudaTotal}
+- Cheques rechazados: ${bcraData.cheques.length}
+- Detalle entidades: ${JSON.stringify(bcraData.entidades.slice(0,5).map(e=>({entidad:e.entidad, situacion:e.situacion, monto:e.monto})))}
+
+Generá un análisis claro, humano y concreto de máximo 200 palabras. Incluí:
+1. Un diagnóstico directo de la situación (1-2 oraciones)
+2. Los puntos más importantes a atender (con **negrita** para destacar)
+3. Una frase motivadora al final
+
+Respondé en español rioplatense. No uses markdown headers, solo párrafos y negritas. No menciones que sos IA.`;
+
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      clearInterval(iv);
+      const data = await resp.json();
+      let text = (data.content && data.content[0] && data.content[0].text) || 'No se pudo generar el análisis.';
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+      document.getElementById('ai-texto').innerHTML = text;
+      aiAnalysis = text;
+
+    } catch(e) {
+      clearInterval(iv);
+      const fallback = generarAnalisisFallback(bcraData);
+      document.getElementById('ai-texto').innerHTML = fallback;
+    }
+
+    document.getElementById('ai-loading').style.display = 'none';
+    document.getElementById('ai-resultado').style.display = 'block';
+  }
+
+  function generarAnalisisFallback(data) {
+    const c = data.califInfo;
+    let txt = '';
+    if (data.peorCalif === 1 && data.entidades.length === 0) {
+      txt = `Tu situación crediticia es <strong>excelente</strong>. No tenés deudas registradas en la Central de Deudores del BCRA, lo que te da una base sólida para acceder a financiamiento en condiciones favorables.<br><br>El próximo paso es <strong>construir historial activo</strong>: tener al menos una línea de crédito en uso y al día (tarjeta de crédito cancelando el total cada mes) hace que los bancos te vean como un deudor confiable.<br><br>¡Seguí así y las puertas del crédito van a estar abiertas para vos!`;
+    } else if (data.peorCalif <= 2) {
+      txt = `Tu situación crediticia está en <strong>${c.label}</strong>. Hay una o más financiaciones que requieren atención para volver a la situación normal.<br><br>El paso más importante es <strong>regularizar las obligaciones en situación 2</strong> cuanto antes: contactá directamente a las entidades para negociar un plan de pago. Una vez que la deuda figure como cancelada, la calificación mejora en el próximo informe mensual.<br><br>Con constancia y un plan claro, la recuperación del crédito es totalmente posible.`;
+    } else {
+      txt = `Tu historial muestra <strong>${c.label}</strong> en algunas entidades. Es una situación que tiene solución, pero requiere acción rápida y ordenada.<br><br>Priorizá <strong>cancelar o acordar</strong> con las entidades de mayor calificación negativa. Muchos bancos y fintechs tienen programas de regularización con quitas. Si encontrás datos incorrectos, podés reclamar gratuitamente ante el BCRA.<br><br>Cada deuda regularizada es un paso concreto hacia la recuperación — esto tiene solución.`;
+    }
+    return txt;
+  }
+
+  const faqs = [
+    { q:'¿Cuánto tarda en actualizarse el informe del BCRA?', a:'Las entidades informan mensualmente. Después de cancelar una deuda, puede tardar hasta 30 días en reflejarse como situación 1 en el informe.' },
+    { q:'¿Puedo pedir que borren mis datos del BCRA?', a:'No podés pedir que borren datos correctos. Sí podés rectificar datos incorrectos o ejercer otros derechos ARCO. Los datos de cheques rechazados se eliminan automáticamente a los 24 meses.' },
+    { q:'¿El reclamo ante el BCRA tiene costo?', a:'No. Todos los canales de reclamo del Banco Central son completamente gratuitos.' },
+    { q:'¿Qué pasa si la entidad no corrige el dato?', a:'Si en 10 días hábiles la entidad no corrigió el error, podés escalar al BCRA. Si el BCRA tampoco resuelve, podés recurrir a la Agencia de Acceso a la Información Pública para ejercer tus derechos sobre datos personales.' },
+  ];
+
+  document.getElementById('faqs').innerHTML = faqs.map((f,i)=>`
+    <div style="border-bottom:0.5px solid var(--color-border-tertiary); padding:10px 0; cursor:pointer;" onclick="toggleFaq(${i})">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:500;">
+        <span>${f.q}</span>
+        <i class="ti ti-chevron-down" id="faq-icon-${i}" aria-hidden="true" style="font-size:14px; color:var(--color-text-secondary); transition:transform 0.2s;"></i>
+      </div>
+      <div id="faq-ans-${i}" style="display:none; font-size:12px; color:var(--color-text-secondary); margin-top:6px; line-height:1.5;">${f.a}</div>
+    </div>
+  `).join('');
+
+  function toggleFaq(i) {
+    const el = document.getElementById('faq-ans-'+i);
+    const ic = document.getElementById('faq-icon-'+i);
+    const open = el.style.display !== 'none';
+    el.style.display = open ? 'none' : 'block';
+    ic.style.transform = open ? '' : 'rotate(180deg)';
+  }
+</script>
