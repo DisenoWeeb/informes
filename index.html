@@ -1,964 +1,647 @@
-
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreditoYa — Informe BCRA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font-sans); }
+/* ── RESET & TOKENS ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0f1e;--surface:#111827;--surface2:#1a2235;--surface3:#1e2d47;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
+  --text:#eef2ff;--muted:#8896b0;--muted2:#5a6a84;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--red:#ef4444;
+  --cat1:#10b981;--cat2:#f59e0b;--cat3:#f97316;--cat4:#ef4444;--cat5:#dc2626;--cat6:#991b1b;
+  --r:10px;--r-lg:16px;
+  --font-head:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden}
 
-  .hero {
-    background: linear-gradient(135deg, #042C53 0%, #185FA5 60%, #378ADD 100%);
-    border-radius: var(--border-radius-lg);
-    padding: 2.5rem 2rem 2rem;
-    color: white;
-    margin-bottom: 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: -30px; left: 40%;
-    width: 120px; height: 120px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.04);
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.15);
-    border: 0.5px solid rgba(255,255,255,0.3);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    margin-bottom: 1rem;
-  }
-  .hero h1 { font-size: 26px; font-weight: 500; margin-bottom: 8px; line-height: 1.3; }
-  .hero p { font-size: 14px; opacity: 0.85; line-height: 1.6; max-width: 500px; }
-  .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
-  .hero-pill {
-    background: rgba(255,255,255,0.12);
-    border: 0.5px solid rgba(255,255,255,0.25);
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-size: 11px;
-    display: flex; align-items: center; gap: 4px;
-  }
+/* ── NAV ────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:rgba(10,15,30,.88);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  height:58px;padding:0 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-family:var(--font-head);font-weight:800;font-size:1.35rem;letter-spacing:-.03em;color:var(--text);text-decoration:none}
+.logo span{color:var(--blue2)}
+.nav-badge{font-size:.75rem;color:var(--muted);background:var(--surface);border:1px solid var(--border2);padding:.25rem .7rem;border-radius:100px}
 
-  .steps-nav {
-    display: flex;
-    gap: 0;
-    margin-bottom: 1.5rem;
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    background: var(--color-background-secondary);
-  }
-  .step-btn {
-    flex: 1;
-    padding: 12px 8px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    border-right: 0.5px solid var(--color-border-tertiary);
-    transition: background 0.15s;
-    position: relative;
-  }
-  .step-btn:last-child { border-right: none; }
-  .step-btn:hover { background: var(--color-background-primary); }
-  .step-btn.active {
-    background: var(--color-background-primary);
-    box-shadow: inset 0 -2px 0 #185FA5;
-  }
-  .step-num {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--color-background-secondary);
-    border: 0.5px solid var(--color-border-secondary);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 500;
-    color: var(--color-text-secondary);
-  }
-  .step-btn.active .step-num {
-    background: #185FA5;
-    border-color: #185FA5;
-    color: white;
-  }
-  .step-btn.done .step-num {
-    background: #0F6E56;
-    border-color: #0F6E56;
-    color: white;
-  }
-  .step-label { font-size: 10px; color: var(--color-text-secondary); text-align: center; line-height: 1.3; }
-  .step-btn.active .step-label { color: #185FA5; font-weight: 500; }
+/* ── HERO ───────────────────────────────────────────────── */
+.hero{padding:100px 1.5rem 60px;max-width:820px;margin:0 auto;text-align:center}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);
+  color:var(--blue2);font-size:.75rem;font-weight:500;
+  padding:.3rem .85rem;border-radius:100px;margin-bottom:1.25rem;
+}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-family:var(--font-head);font-size:clamp(2rem,5.5vw,3.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:1.1rem}
+h1 em{font-style:normal;background:linear-gradient(120deg,var(--blue2),var(--green2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--muted);font-size:1.05rem;font-weight:300;max-width:500px;margin:0 auto 2.5rem}
 
-  .panel { display: none; }
-  .panel.active { display: block; }
+/* ── MAIN CARD ──────────────────────────────────────────── */
+.main-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:2rem;margin-bottom:2rem;
+}
+.card-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue2);margin-bottom:.5rem}
+.card-title{font-family:var(--font-head);font-weight:700;font-size:1.1rem;letter-spacing:-.02em;margin-bottom:.5rem}
+.card-desc{color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:1.25rem}
 
-  .card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-lg);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-  }
+/* ── STEPS BADGE ────────────────────────────────────────── */
+.steps-inline{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.step-pill{
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:100px;padding:.3rem .85rem;font-size:.8rem;color:var(--muted);
+}
+.step-pill .num{
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(59,130,246,.2);color:var(--blue2);
+  font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
 
-  .section-title {
-    font-size: 16px; font-weight: 500;
-    color: var(--color-text-primary);
-    margin-bottom: 4px;
-  }
-  .section-sub {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
-    line-height: 1.5;
-  }
+/* ── BCRA BUTTON ────────────────────────────────────────── */
+.bcra-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#003087;border:1px solid rgba(255,255,255,.12);
+  color:#fff;font-family:var(--font-body);font-size:.9rem;font-weight:500;
+  padding:.65rem 1.25rem;border-radius:var(--r);
+  cursor:pointer;text-decoration:none;transition:background .2s;
+}
+.bcra-btn:hover{background:#004ab3}
 
-  .cuit-form { display: flex; gap: 8px; flex-wrap: wrap; }
-  .cuit-input {
-    flex: 1;
-    min-width: 200px;
-    padding: 10px 14px;
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: var(--border-radius-md);
-    font-size: 16px;
-    background: var(--color-background-primary);
-    color: var(--color-text-primary);
-    letter-spacing: 1px;
-  }
-  .cuit-input:focus { outline: 2px solid #185FA5; outline-offset: 1px; }
-  .btn-primary {
-    padding: 10px 20px;
-    background: #185FA5;
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 14px;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap;
-    font-weight: 500;
-  }
-  .btn-primary:hover { background: #0C447C; }
-  .btn-primary:disabled { background: var(--color-background-secondary); color: var(--color-text-tertiary); cursor: not-allowed; }
+/* ── URL INPUT ──────────────────────────────────────────── */
+.url-row{display:flex;gap:.65rem;flex-wrap:wrap;align-items:flex-end;margin-top:1.25rem}
+.url-wrap{flex:1;min-width:240px}
+.url-wrap label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px}
+.url-input{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text);font-family:var(--font-body);font-size:.875rem;
+  padding:.7rem 1rem;border-radius:var(--r);outline:none;
+  transition:border-color .2s;
+}
+.url-input:focus{border-color:var(--blue)}
+.url-input::placeholder{color:var(--muted2)}
+.url-input.error{border-color:var(--red)}
 
-  .info-note {
-    display: flex; gap: 8px; align-items: flex-start;
-    background: var(--color-background-info);
-    border: 0.5px solid var(--color-border-info);
-    border-radius: var(--border-radius-md);
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--color-text-info);
-    margin-top: 1rem;
-    line-height: 1.5;
-  }
+.fetch-btn{
+  background:var(--blue);color:#fff;font-family:var(--font-body);font-size:.9rem;font-weight:500;
+  padding:.7rem 1.4rem;border-radius:var(--r);border:none;
+  cursor:pointer;transition:background .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;
+}
+.fetch-btn:hover{background:#2563eb}
+.fetch-btn:disabled{opacity:.4;cursor:not-allowed}
 
-  #resultado-bcra { display: none; }
+.url-hint{margin-top:.6rem;font-size:.77rem;color:var(--muted);display:flex;gap:6px;align-items:flex-start;line-height:1.5}
+.url-hint .ok{color:var(--green2);flex-shrink:0}
 
-  .calif-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-  }
-  .calif-1 { background: #EAF3DE; color: #3B6D11; }
-  .calif-2 { background: #FAEEDA; color: #854F0B; }
-  .calif-3 { background: #FAECE7; color: #993C1D; }
-  .calif-4 { background: #FCEBEB; color: #A32D2D; }
-  .calif-5 { background: #FCEBEB; color: #501313; }
+/* ── TIMER ──────────────────────────────────────────────── */
+#timer-wrap{
+  margin-top:.75rem;display:none;
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);
+  border-radius:var(--r);padding:.65rem 1rem;
+  font-size:.82rem;color:var(--yellow);display:none;
+}
+#timer-wrap.visible{display:flex;align-items:center;gap:8px}
+#timer-bar-outer{flex:1;height:4px;background:rgba(245,158,11,.15);border-radius:2px;overflow:hidden}
+#timer-bar{height:100%;background:var(--yellow);border-radius:2px;transition:width .5s linear}
 
-  .deuda-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 0;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    font-size: 13px;
-  }
-  .deuda-row:last-child { border-bottom: none; }
-  .deuda-entidad { color: var(--color-text-primary); font-weight: 500; }
-  .deuda-meta { color: var(--color-text-secondary); font-size: 12px; margin-top: 2px; }
-  .deuda-monto { text-align: right; }
+/* ── LOADING ────────────────────────────────────────────── */
+.loading{
+  display:none;text-align:center;padding:2.5rem;
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);margin-top:1.5rem;
+}
+.loading.visible{display:block}
+.spinner{width:36px;height:36px;border-radius:50%;border:3px solid var(--border2);border-top-color:var(--blue);animation:spin .75s linear infinite;margin:0 auto .85rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:var(--muted);font-size:.875rem}
 
-  .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
-  .metric-card {
-    background: var(--color-background-secondary);
-    border-radius: var(--border-radius-md);
-    padding: 12px;
-    text-align: center;
-  }
-  .metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
-  .metric-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
-  .metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+/* ── RESULT WRAPPER ─────────────────────────────────────── */
+#result{display:none;margin-top:1.5rem;animation:fadeUp .4s ease}
+#result.visible{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-  .loading-spinner {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── TITULAR HEADER ─────────────────────────────────────── */
+.titular-header{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:1.5rem 1.75rem;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;
+}
+.titular-avatar{
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-weight:700;font-size:1.1rem;color:var(--blue2);
+  flex-shrink:0;
+}
+.titular-name{font-family:var(--font-head);font-weight:700;font-size:1.2rem;letter-spacing:-.02em}
+.titular-meta{color:var(--muted);font-size:.85rem;margin-top:.2rem}
+.sit-badge{
+  margin-left:auto;display:flex;flex-direction:column;align-items:center;
+  width:64px;height:64px;border-radius:50%;
+  font-family:var(--font-head);font-weight:800;
+  border:2px solid;
+}
+.sit-badge .num{font-size:1.7rem;line-height:1}
+.sit-badge .lbl{font-size:.58rem;font-weight:700;letter-spacing:.06em;opacity:.8}
 
-  .ai-analysis {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-lg);
-    padding: 1.25rem;
-  }
-  .ai-header {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 1rem;
-    padding-bottom: 10px;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-  }
-  .ai-icon {
-    width: 32px; height: 32px;
-    background: #E6F1FB;
-    border-radius: var(--border-radius-md);
-    display: flex; align-items: center; justify-content: center;
-    color: #185FA5;
-  }
-  .ai-text { font-size: 14px; line-height: 1.7; color: var(--color-text-primary); }
-  .ai-text strong { font-weight: 500; }
+/* ── TABS ───────────────────────────────────────────────── */
+.tabs{display:flex;gap:.35rem;margin-bottom:1rem;flex-wrap:wrap}
+.tab{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--muted);font-size:.8rem;font-weight:500;
+  padding:.35rem .85rem;border-radius:100px;
+  cursor:pointer;transition:all .15s;
+}
+.tab:hover{color:var(--text);border-color:var(--border2)}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .action-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-md);
-    padding: 14px;
-    cursor: pointer;
-    transition: border-color 0.15s;
-  }
-  .action-card:hover { border-color: #185FA5; }
-  .action-icon { font-size: 20px; margin-bottom: 8px; color: #185FA5; }
-  .action-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
-  .action-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 
-  .reclamo-steps { counter-reset: reclamo; }
-  .reclamo-step {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 12px 0;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .reclamo-step:last-child { border-bottom: none; }
-  .reclamo-num {
-    min-width: 24px; height: 24px;
-    border-radius: 50%;
-    background: #E6F1FB;
-    color: #185FA5;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    font-weight: 500;
-    margin-top: 1px;
-  }
-  .reclamo-content {}
-  .reclamo-title { font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
-  .reclamo-desc { color: var(--color-text-secondary); }
-  .reclamo-link {
-    display: inline-flex; align-items: center; gap: 4px;
-    color: #185FA5;
-    font-size: 12px;
-    text-decoration: none;
-    margin-top: 4px;
-  }
+/* ── DATA CARDS ─────────────────────────────────────────── */
+.data-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);
+  margin-bottom:1rem;overflow:hidden;
+}
+.dc-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.85rem 1.25rem;cursor:pointer;transition:background .15s;
+  border-bottom:1px solid transparent;
+}
+.dc-head:hover{background:rgba(255,255,255,.03)}
+.dc-head.open{border-bottom-color:var(--border)}
+.dc-entity{font-weight:500;font-size:.95rem}
+.dc-meta{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.dc-monto{font-family:var(--font-head);font-weight:700;font-size:1rem;color:var(--text)}
+.sit-pill{
+  font-size:.72rem;font-weight:700;letter-spacing:.05em;
+  padding:.2rem .65rem;border-radius:100px;
+}
+.s1{background:rgba(16,185,129,.15);color:var(--cat1)}
+.s2{background:rgba(245,158,11,.12);color:var(--cat2)}
+.s3{background:rgba(249,115,22,.12);color:var(--cat3)}
+.s4{background:rgba(239,68,68,.12);color:var(--cat4)}
+.s5{background:rgba(220,38,38,.15);color:var(--cat5)}
+.s6{background:rgba(153,27,27,.2);color:#fca5a5}
+.chevron{color:var(--muted);font-size:.9rem;transition:transform .25s}
+.dc-head.open .chevron{transform:rotate(180deg)}
 
-  .score-bar-wrap { margin: 1rem 0; }
-  .score-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; }
-  .score-bar {
-    height: 10px;
-    border-radius: 5px;
-    background: var(--color-background-secondary);
-    overflow: hidden;
-  }
-  .score-fill {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.8s ease;
-  }
+.dc-body{display:none;padding:1rem 1.25rem}
+.dc-body.open{display:block}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.65rem}
+.dg-item{background:var(--surface3);border-radius:var(--r);padding:.65rem .85rem}
+.dg-label{font-size:.72rem;color:var(--muted);margin-bottom:.2rem}
+.dg-value{font-size:.9rem;font-weight:500;color:var(--text)}
 
-  .error-box {
-    background: var(--color-background-danger);
-    border: 0.5px solid var(--color-border-danger);
-    border-radius: var(--border-radius-md);
-    padding: 12px 16px;
-    color: var(--color-text-danger);
-    font-size: 13px;
-    display: none;
-  }
+/* ── HISTORIAL GRID ─────────────────────────────────────── */
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.4rem;margin-top:.5rem}
+.hist-cell{
+  background:var(--surface3);border-radius:6px;padding:.5rem .4rem;
+  text-align:center;border:1px solid var(--border);
+}
+.hist-periodo{font-size:.68rem;color:var(--muted);margin-bottom:.25rem}
+.hist-sit{font-size:.85rem;font-weight:700}
 
-  .iframe-container {
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    height: 420px;
-    background: var(--color-background-secondary);
-    display: flex;
-    flex-direction: column;
-  }
-  .iframe-header {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
-    background: #042C53;
-    color: white;
-    font-size: 13px;
-  }
-  .iframe-dots { display: flex; gap: 5px; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .iframe-body {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 12px;
-    padding: 2rem;
-    text-align: center;
-  }
-  .bcra-logo-preview {
-    width: 60px; height: 60px;
-    border-radius: var(--border-radius-lg);
-    background: #042C53;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    font-weight: 500;
-    color: white;
-  }
-  .open-bcra-btn {
-    padding: 10px 20px;
-    background: #042C53;
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 13px;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    font-weight: 500;
-  }
-  .open-bcra-btn:hover { background: #185FA5; }
+/* ── CHEQUES ────────────────────────────────────────────── */
+.cheque-row{
+  display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;
+  padding:.75rem 0;border-bottom:1px solid var(--border);
+  font-size:.875rem;
+}
+.cheque-row:last-child{border-bottom:none;padding-bottom:0}
 
-  .cheques-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .cheques-table th {
-    text-align: left;
-    padding: 8px;
-    background: var(--color-background-secondary);
-    color: var(--color-text-secondary);
-    font-weight: 500;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-  }
-  .cheques-table td {
-    padding: 8px;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    color: var(--color-text-primary);
-  }
+/* ── EMPTY STATE ────────────────────────────────────────── */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:.875rem}
+.empty span{display:block;font-size:2rem;margin-bottom:.75rem;opacity:.4}
 
-  .tag-positivo { background: #EAF3DE; color: #3B6D11; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
-  .tag-negativo { background: #FCEBEB; color: #A32D2D; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
-  .tag-neutro { background: #FAEEDA; color: #854F0B; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+/* ── RAW ACCORDION ──────────────────────────────────────── */
+.raw-toggle{
+  background:none;border:1px solid var(--border);color:var(--muted);
+  font-family:var(--font-body);font-size:.78rem;padding:.4rem .9rem;
+  border-radius:var(--r);cursor:pointer;transition:all .15s;margin-top:1rem;
+}
+.raw-toggle:hover{border-color:var(--border2);color:var(--text)}
+.raw-box{
+  display:none;margin-top:.75rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem;max-height:240px;overflow-y:auto;
+  font-family:monospace;font-size:.75rem;color:var(--muted);line-height:1.5;
+  white-space:pre-wrap;word-break:break-all;
+}
+.raw-box.open{display:block}
 
-  .nav-btns { display: flex; justify-content: space-between; margin-top: 1rem; }
-  .btn-sec {
-    padding: 9px 18px;
-    background: transparent;
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: var(--border-radius-md);
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--color-text-primary);
-    display: flex; align-items: center; gap: 6px;
-  }
-  .btn-sec:hover { background: var(--color-background-secondary); }
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer{
+  border-top:1px solid var(--border);padding:2.5rem 1.5rem;
+  text-align:center;color:var(--muted2);font-size:.78rem;line-height:1.7;
+  max-width:600px;margin:3rem auto 0;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:600px){
+  .url-row{flex-direction:column}
+  .fetch-btn{width:100%;justify-content:center}
+  .titular-header{flex-direction:column;text-align:center}
+  .sit-badge{margin:0 auto}
+}
 </style>
+</head>
+<body>
 
-<h2 class="sr-only">CréditoLimpio — Asesoramiento gratuito sobre tu situación crediticia en el BCRA</h2>
+<nav>
+  <a href="#" class="logo">Credito<span>Ya</span></a>
+  <span class="nav-badge">Central de Deudores BCRA</span>
+</nav>
 
-<div class="hero">
-  <div class="hero-badge">
-    <i class="ti ti-shield-check" aria-hidden="true"></i>
-    Servicio gratuito y sin registro
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag"><span class="dot"></span>Datos oficiales del BCRA · Gratuito</div>
+  <h1>Tu informe crediticio<br><em>claro y organizado</em></h1>
+  <p class="hero-sub">Consultá en el BCRA, pegá la URL del informe y visualizá todos los datos al instante.</p>
+</section>
+
+<!-- MAIN -->
+<div style="max-width:820px;margin:0 auto;padding:0 1.5rem 4rem">
+
+  <!-- PASO 1: ir al BCRA -->
+  <div class="main-card">
+    <div class="card-label">Paso 1</div>
+    <div class="card-title">Consultá tu informe en el BCRA</div>
+    <div class="card-desc">
+      Hacé clic para ir al sitio oficial del Banco Central. Pasá la verificación Cloudflare, ingresá tu CUIT/CUIL y presioná <strong>Consultar</strong>.
+      El BCRA generará una URL única con un token temporal.
+    </div>
+    <a class="bcra-btn" href="https://www.bcra.gob.ar/situacion-crediticia/" target="_blank" rel="noopener">
+      🏛 Ir al BCRA · situacion-crediticia
+    </a>
+    <div style="margin-top:1rem">
+      <div class="steps-inline">
+        <div class="step-pill"><span class="num">1</span>Abrí el link de arriba</div>
+        <div class="step-pill"><span class="num">2</span>Pasá el captcha Cloudflare</div>
+        <div class="step-pill"><span class="num">3</span>Ingresá tu CUIT y consultá</div>
+        <div class="step-pill"><span class="num">4</span>Copiá la URL de la barra del navegador</div>
+      </div>
+    </div>
   </div>
-  <h1>Conocé y mejorá tu situación crediticia</h1>
-  <p>Consultamos el informe oficial del Banco Central de la República Argentina, lo analizamos con IA y te explicamos exactamente qué hacer — sin costo y sin salir de acá.</p>
-  <div class="hero-pills">
-    <span class="hero-pill"><i class="ti ti-building-bank" aria-hidden="true"></i> Datos oficiales BCRA</span>
-    <span class="hero-pill"><i class="ti ti-robot" aria-hidden="true"></i> Análisis con IA</span>
-    <span class="hero-pill"><i class="ti ti-lock-open" aria-hidden="true"></i> 100% gratuito</span>
-    <span class="hero-pill"><i class="ti ti-eye-off" aria-hidden="true"></i> Sin registrarte</span>
-  </div>
-</div>
 
-<div class="steps-nav">
-  <button class="step-btn active" onclick="goStep(1)" id="nav1">
-    <span class="step-num">1</span>
-    <span class="step-label">Consultar BCRA</span>
-  </button>
-  <button class="step-btn" onclick="goStep(2)" id="nav2">
-    <span class="step-num">2</span>
-    <span class="step-label">Ver informe</span>
-  </button>
-  <button class="step-btn" onclick="goStep(3)" id="nav3">
-    <span class="step-num">3</span>
-    <span class="step-label">Análisis IA</span>
-  </button>
-  <button class="step-btn" onclick="goStep(4)" id="nav4">
-    <span class="step-num">4</span>
-    <span class="step-label">Plan de acción</span>
-  </button>
-  <button class="step-btn" onclick="goStep(5)" id="nav5">
-    <span class="step-num">5</span>
-    <span class="step-label">Reclamos</span>
-  </button>
-</div>
+  <!-- PASO 2: pegar URL -->
+  <div class="main-card">
+    <div class="card-label">Paso 2</div>
+    <div class="card-title">Pegá la URL del informe</div>
+    <div class="card-desc">
+      La URL generada por el BCRA tiene este formato:<br>
+      <code style="font-size:.78rem;color:var(--muted);background:var(--surface2);padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-top:.35rem">
+        https://www.bcra.gob.ar/deudores/?cuit=20...&amp;ts=...&amp;token=...
+      </code>
+    </div>
 
-<!-- PASO 1: Consultar CUIT -->
-<div class="panel active" id="panel1">
-  <div class="card">
-    <p class="section-title">Ingresá tu CUIT / CUIL / CDI</p>
-    <p class="section-sub">Con tu número de identificación fiscal consultamos el informe oficial del BCRA. Es público, gratuito y no requiere ningún tipo de registro.</p>
-    <div class="cuit-form">
-      <input class="cuit-input" type="text" id="cuit-input" placeholder="20-12345678-9" maxlength="13" oninput="formatCuit(this)" />
-      <button class="btn-primary" id="btn-consultar" onclick="consultarBCRA()">
-        <i class="ti ti-search" aria-hidden="true"></i>
-        Consultar
+    <div class="url-row">
+      <div class="url-wrap">
+        <label for="url-input">URL del informe BCRA</label>
+        <input type="url" id="url-input" class="url-input"
+          placeholder="https://www.bcra.gob.ar/deudores/?cuit=...&ts=...&token=...">
+      </div>
+      <button class="fetch-btn" id="fetch-btn">
+        <span>Ver informe</span>
+        <span>→</span>
       </button>
     </div>
-    <div class="error-box" id="error-cuit">
-      <i class="ti ti-alert-circle" aria-hidden="true"></i>
-      <span id="error-msg"></span>
+
+    <div id="timer-wrap">
+      <span>⏱ Token expira en</span>
+      <strong id="timer-count">5:00</strong>
+      <div id="timer-bar-outer"><div id="timer-bar" style="width:100%"></div></div>
     </div>
-    <div class="info-note">
-      <i class="ti ti-info-circle" style="flex-shrink:0; margin-top:1px" aria-hidden="true"></i>
-      <span>La consulta se realiza directamente en la API oficial del BCRA (<strong>api.bcra.gob.ar</strong>). Los datos son suministrados por las entidades financieras y su difusión no implica conformidad por parte del Banco Central.</span>
+
+    <div class="url-hint">
+      <span class="ok">✓</span>
+      <span>El token del BCRA expira en pocos minutos. Pegá la URL rápidamente después de copiarla.</span>
     </div>
   </div>
 
-  <div class="card">
-    <p class="section-title" style="margin-bottom:10px">¿Qué incluye el informe del BCRA?</p>
-    <div class="action-grid">
-      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
-        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
-        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Deudas con bancos</div>
-        <div style="font-size:11px; color:var(--color-text-secondary);">Préstamos, tarjetas y financiaciones de entidades reguladas</div>
-      </div>
-      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
-        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-credit-card" aria-hidden="true"></i></div>
-        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Tarjetas y fintech</div>
-        <div style="font-size:11px; color:var(--color-text-secondary);">Emisoras no bancarias de crédito y plataformas P2P</div>
-      </div>
-      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
-        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-file-invoice" aria-hidden="true"></i></div>
-        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Cheques rechazados</div>
-        <div style="font-size:11px; color:var(--color-text-secondary);">Registro de cheques sin fondos o rechazados por otros motivos</div>
-      </div>
-      <div style="padding:10px; background:var(--color-background-secondary); border-radius:var(--border-radius-md);">
-        <div style="font-size:18px; color:#185FA5; margin-bottom:6px;"><i class="ti ti-shield" aria-hidden="true"></i></div>
-        <div style="font-size:12px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px;">Garantías SGR/FGP</div>
-        <div style="font-size:11px; color:var(--color-text-secondary);">Sociedades de garantía recíproca y fondos de garantía públicos</div>
-      </div>
-    </div>
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Obteniendo datos del BCRA…</p>
+    <p style="margin-top:.4rem;font-size:.78rem">Esto puede tardar unos segundos</p>
   </div>
 
-  <div class="iframe-container">
-    <div class="iframe-header">
-      <div class="iframe-dots">
-        <div class="dot" style="background:#E24B4A"></div>
-        <div class="dot" style="background:#EF9F27"></div>
-        <div class="dot" style="background:#639922"></div>
-      </div>
-      <span style="opacity:0.7; font-size:11px;">bcra.gob.ar — Central de Deudores</span>
-    </div>
-    <div class="iframe-body">
-      <div class="bcra-logo-preview">BCRA</div>
-      <p style="font-size:13px; color:var(--color-text-secondary); max-width:280px; line-height:1.5;">
-        El sitio oficial del BCRA no puede incrustarse aquí por restricciones de seguridad. Podés consultarlo directamente haciendo clic abajo — es la misma consulta que haremos por API.
-      </p>
-      <button class="open-bcra-btn" onclick="openLink('https://www.bcra.gob.ar/situacion-crediticia/')">
-        <i class="ti ti-external-link" aria-hidden="true"></i>
-        Abrir Central de Deudores BCRA
-      </button>
-    </div>
+  <!-- RESULTADO -->
+  <div id="result">
+    <!-- se llena dinámicamente -->
   </div>
+
 </div>
 
-<!-- PASO 2: Ver informe -->
-<div class="panel" id="panel2">
-  <div id="cargando-informe" style="text-align:center; padding:2rem; display:none;">
-    <div style="font-size:40px; color:#185FA5; margin-bottom:12px;"><i class="ti ti-loader-2" aria-hidden="true"></i></div>
-    <p style="font-size:14px; color:var(--color-text-secondary);">Consultando la API oficial del BCRA...</p>
-  </div>
-
-  <div id="resultado-bcra">
-    <div class="card" style="border-color:#185FA5; margin-bottom:1rem;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-        <div>
-          <p class="section-title" style="margin-bottom:2px;" id="res-cuit-label">CUIT: —</p>
-          <p style="font-size:12px; color:var(--color-text-secondary);" id="res-fecha">Consultado: —</p>
-        </div>
-        <span class="calif-badge" id="calif-badge">—</span>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-labels">
-          <span>Situación 1 (Normal)</span>
-          <span>Situación 5 (Irrecuperable)</span>
-        </div>
-        <div class="score-bar">
-          <div class="score-fill" id="score-fill" style="width:0%"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="metric-grid">
-      <div class="metric-card">
-        <div class="metric-label">Entidades informantes</div>
-        <div class="metric-value" id="res-entidades">—</div>
-        <div class="metric-sub">registros</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Deuda total aprox.</div>
-        <div class="metric-value" id="res-deuda">—</div>
-        <div class="metric-sub">en miles $</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Cheques rechazados</div>
-        <div class="metric-value" id="res-cheques">—</div>
-        <div class="metric-sub">registros</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <p class="section-title" style="margin-bottom:12px;">Detalle por entidad</p>
-      <div id="deudas-lista"></div>
-    </div>
-
-    <div class="card" id="card-cheques" style="display:none;">
-      <p class="section-title" style="margin-bottom:12px;">Cheques rechazados</p>
-      <div id="cheques-lista"></div>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-sec" onclick="goStep(1)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
-      <button class="btn-primary" onclick="iniciarAnalisis()"><i class="ti ti-robot" aria-hidden="true"></i> Analizar con IA</button>
-    </div>
-  </div>
-</div>
-
-<!-- PASO 3: Análisis IA -->
-<div class="panel" id="panel3">
-  <div id="ai-loading" style="text-align:center; padding:2.5rem; display:none;">
-    <div style="font-size:40px; color:#185FA5; margin-bottom:12px;"><i class="ti ti-brain" aria-hidden="true"></i></div>
-    <p style="font-size:14px; color:var(--color-text-secondary);" id="ai-loading-msg">Analizando tu situación crediticia...</p>
-  </div>
-  <div id="ai-resultado" style="display:none;">
-    <div class="ai-analysis">
-      <div class="ai-header">
-        <div class="ai-icon"><i class="ti ti-robot" aria-hidden="true"></i></div>
-        <div>
-          <p style="font-weight:500; font-size:14px; margin:0;">Análisis de situación crediticia</p>
-          <p style="font-size:12px; color:var(--color-text-secondary); margin:0;">Generado por inteligencia artificial a partir de datos oficiales BCRA</p>
-        </div>
-      </div>
-      <div class="ai-text" id="ai-texto"></div>
-    </div>
-    <div class="nav-btns" style="margin-top:1rem;">
-      <button class="btn-sec" onclick="goStep(2)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
-      <button class="btn-primary" onclick="goStep(4)">Ver plan de acción <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
-    </div>
-  </div>
-</div>
-
-<!-- PASO 4: Plan de acción -->
-<div class="panel" id="panel4">
-  <div class="card">
-    <p class="section-title">Tu plan para mejorar la calificación</p>
-    <p class="section-sub">Pasos concretos según tu situación real, ordenados por impacto.</p>
-    <div id="plan-acciones"></div>
-  </div>
-  <div class="nav-btns">
-    <button class="btn-sec" onclick="goStep(3)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
-    <button class="btn-primary" onclick="goStep(5)">Reclamos formales <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
-  </div>
-</div>
-
-<!-- PASO 5: Reclamos -->
-<div class="panel" id="panel5">
-  <div class="card">
-    <p class="section-title">¿Hay información incorrecta en el informe?</p>
-    <p class="section-sub">Si encontrás datos que no te corresponden, tenés derecho a reclamar gratuitamente. Acá te explicamos el proceso completo.</p>
-
-    <div class="reclamo-steps">
-      <div class="reclamo-step">
-        <div class="reclamo-num">1</div>
-        <div class="reclamo-content">
-          <div class="reclamo-title">Identificá el error</div>
-          <div class="reclamo-desc">Anotá el nombre de la entidad que informó el dato incorrecto, el período y el monto. Esta información está en el informe que obtuviste en el paso anterior.</div>
-        </div>
-      </div>
-      <div class="reclamo-step">
-        <div class="reclamo-num">2</div>
-        <div class="reclamo-content">
-          <div class="reclamo-title">Contactá directamente a la entidad</div>
-          <div class="reclamo-desc">Primero debés reclamar ante la entidad que informó el dato erróneo (banco, fintech, etc.). Enviá una nota formal o carta documento exigiendo la corrección en un plazo de 10 días hábiles.</div>
-        </div>
-      </div>
-      <div class="reclamo-step">
-        <div class="reclamo-num">3</div>
-        <div class="reclamo-content">
-          <div class="reclamo-title">Reclamo ante el BCRA si no hay respuesta</div>
-          <div class="reclamo-desc">Si la entidad no corrigió el dato en el plazo, podés escalar el reclamo al Banco Central. El trámite es 100% gratuito.</div>
-          <a class="reclamo-link" href="https://www.bcra.gob.ar/BCRAyVos/Sistema_de_consultas_y_reclamos.asp" target="_blank">
-            <i class="ti ti-external-link" aria-hidden="true"></i> Sistema de reclamos BCRA
-          </a>
-        </div>
-      </div>
-      <div class="reclamo-step">
-        <div class="reclamo-num">4</div>
-        <div class="reclamo-content">
-          <div class="reclamo-title">Seguí tu reclamo en línea</div>
-          <div class="reclamo-desc">El BCRA te asigna un número de reclamo con el que podés hacer seguimiento por la web sin necesidad de ir a ninguna oficina.</div>
-        </div>
-      </div>
-      <div class="reclamo-step">
-        <div class="reclamo-num">5</div>
-        <div class="reclamo-content">
-          <div class="reclamo-title">Derechos ARCO (datos personales)</div>
-          <div class="reclamo-desc">Como titular de los datos tenés derechos de Acceso, Rectificación, Cancelación y Oposición. Si el BCRA no resuelve, podés recurrir a la Agencia de Acceso a la Información Pública.</div>
-          <a class="reclamo-link" href="https://www.argentina.gob.ar/aaip" target="_blank">
-            <i class="ti ti-external-link" aria-hidden="true"></i> Agencia de Acceso a la Información Pública
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <p class="section-title" style="margin-bottom:12px;">Preguntas frecuentes</p>
-    <div id="faqs"></div>
-  </div>
-
-  <div class="nav-btns">
-    <button class="btn-sec" onclick="goStep(4)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver</button>
-    <button class="btn-primary" onclick="goStep(1)"><i class="ti ti-refresh" aria-hidden="true"></i> Nueva consulta</button>
-  </div>
-</div>
+<footer>
+  Este sitio no es parte del Banco Central de la República Argentina.<br>
+  Los datos provienen directamente de bcra.gob.ar. No almacenamos ninguna información personal.
+</footer>
 
 <script>
-  let currentStep = 1;
-  let bcraData = null;
-  let aiAnalysis = null;
+// ──────────────────────────────────────────────────────────────
+// CONFIGURACIÓN
+// Reemplazá esta URL con la de tu Web App de Google Apps Script
+// ──────────────────────────────────────────────────────────────
+const PROXY_URL = "REEMPLAZAR_CON_TU_APPS_SCRIPT_URL";
 
-  const CALIFMAP = {
-    1: { label: 'Situación Normal', cls: 'calif-1', pct: 10, color: '#639922' },
-    2: { label: 'Seguimiento especial', cls: 'calif-2', pct: 35, color: '#EF9F27' },
-    3: { label: 'Con problemas', cls: 'calif-3', pct: 60, color: '#D85A30' },
-    4: { label: 'Alto riesgo de insolvencia', cls: 'calif-4', pct: 80, color: '#E24B4A' },
-    5: { label: 'Irrecuperable', cls: 'calif-5', pct: 100, color: '#A32D2D' },
-  };
+// ── Timer ─────────────────────────────────────────────────────
+let timerInterval = null;
+const EXPIRY_SECONDS = 300; // 5 minutos
 
-  function formatCuit(input) {
-    let val = input.value.replace(/\D/g,'');
-    if (val.length > 2 && val.length <= 10) val = val.slice(0,2)+'-'+val.slice(2);
-    if (val.length > 11) val = val.slice(0,11)+'-'+val.slice(11);
-    input.value = val.slice(0,13);
+function startTimer() {
+  const wrap = document.getElementById("timer-wrap");
+  const count = document.getElementById("timer-count");
+  const bar = document.getElementById("timer-bar");
+  wrap.classList.add("visible");
+  let remaining = EXPIRY_SECONDS;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    remaining--;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    count.textContent = `${m}:${s.toString().padStart(2, "0")}`;
+    bar.style.width = (remaining / EXPIRY_SECONDS * 100) + "%";
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      count.textContent = "expirado";
+      bar.style.width = "0%";
+      bar.style.background = "var(--red)";
+    }
+  }, 1000);
+}
+
+// ── URL detect ────────────────────────────────────────────────
+document.getElementById("url-input").addEventListener("input", function() {
+  const v = this.value.trim();
+  this.classList.remove("error");
+  if (v.includes("bcra.gob.ar/deudores/") && v.includes("token=")) {
+    startTimer();
+  }
+});
+
+// ── FETCH ─────────────────────────────────────────────────────
+document.getElementById("fetch-btn").addEventListener("click", fetchInforme);
+document.getElementById("url-input").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") fetchInforme();
+});
+
+async function fetchInforme() {
+  const raw = document.getElementById("url-input").value.trim();
+  if (!raw.includes("bcra.gob.ar/deudores/") || !raw.includes("token=")) {
+    document.getElementById("url-input").classList.add("error");
+    document.getElementById("url-input").focus();
+    return;
   }
 
-  function rawCuit(v) { return v.replace(/\D/g,''); }
+  clearInterval(timerInterval);
+  document.getElementById("timer-wrap").classList.remove("visible");
+  document.getElementById("loading").classList.add("visible");
+  document.getElementById("result").classList.remove("visible");
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("fetch-btn").disabled = true;
 
-  function goStep(n) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel'+n).classList.add('active');
-    for(let i=1;i<=5;i++){
-      const btn = document.getElementById('nav'+i);
-      btn.classList.remove('active','done');
-      if(i < n) btn.classList.add('done');
-      if(i === n) btn.classList.add('active');
-    }
-    currentStep = n;
-  }
+  try {
+    let data;
 
-  async function consultarBCRA() {
-    const inputEl = document.getElementById('cuit-input');
-    const cuit = rawCuit(inputEl.value);
-    const errBox = document.getElementById('error-cuit');
-    const errMsg = document.getElementById('error-msg');
-    errBox.style.display = 'none';
-
-    if (cuit.length < 10 || cuit.length > 11) {
-      errMsg.textContent = 'Ingresá un CUIT/CUIL válido (10 u 11 dígitos).';
-      errBox.style.display = 'flex';
-      return;
-    }
-
-    const btn = document.getElementById('btn-consultar');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span> Consultando...';
-
-    goStep(2);
-    document.getElementById('cargando-informe').style.display = 'block';
-    document.getElementById('resultado-bcra').style.display = 'none';
-
-    try {
-      const [resDeudas, resCheques] = await Promise.all([
-        fetch(`https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/${cuit}`),
-        fetch(`https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/Historicas/${cuit}`)
-      ]);
-
-      let deudaData = null, chequesData = null;
-
-      if (resDeudas.ok) {
-        const json = await resDeudas.json();
-        deudaData = json.results || json;
-      }
-
-      if (resCheques.ok) {
-        try { chequesData = await resCheques.json(); } catch(e){}
-      }
-
-      renderInforme(cuit, deudaData, chequesData);
-
-    } catch(e) {
-      document.getElementById('cargando-informe').style.display = 'none';
-      renderInformeDemoAnterior(cuit, e);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ti ti-search" aria-hidden="true"></i> Consultar';
-    }
-  }
-
-  function renderInforme(cuit, data, chequesRaw) {
-    document.getElementById('cargando-informe').style.display = 'none';
-    document.getElementById('resultado-bcra').style.display = 'block';
-
-    const ahora = new Date().toLocaleDateString('es-AR', {day:'2-digit',month:'long',year:'numeric'});
-    document.getElementById('res-cuit-label').textContent = 'CUIT: ' + cuit;
-    document.getElementById('res-fecha').textContent = 'Consultado: ' + ahora;
-
-    let periodos = [];
-    let peorCalif = 1;
-    let deudaTotal = 0;
-
-    if (data && data.periodos) periodos = data.periodos;
-    else if (data && Array.isArray(data)) periodos = data;
-
-    let entidadesList = [];
-    periodos.forEach(per => {
-      if (per.entidades) per.entidades.forEach(ent => {
-        if (ent.situacion > peorCalif) peorCalif = ent.situacion;
-        deudaTotal += (ent.monto || 0);
-        entidadesList.push({...ent, periodo: per.periodo});
-      });
-    });
-
-    const califInfo = CALIFMAP[peorCalif] || CALIFMAP[1];
-    const badgeEl = document.getElementById('calif-badge');
-    badgeEl.textContent = califInfo.label;
-    badgeEl.className = 'calif-badge ' + califInfo.cls;
-
-    const fillEl = document.getElementById('score-fill');
-    fillEl.style.background = califInfo.color;
-    setTimeout(()=>{ fillEl.style.width = califInfo.pct+'%'; }, 100);
-
-    document.getElementById('res-entidades').textContent = entidadesList.length || '0';
-    document.getElementById('res-deuda').textContent = deudaTotal > 0 ? '$'+Math.round(deudaTotal).toLocaleString('es-AR') : '—';
-
-    const listaEl = document.getElementById('deudas-lista');
-    if (entidadesList.length === 0) {
-      listaEl.innerHTML = '<div style="padding:1.5rem; text-align:center; color:var(--color-text-secondary); font-size:13px;"><i class="ti ti-check-circle" style="font-size:24px; color:#639922; display:block; margin-bottom:8px;"></i>Sin deudas registradas en el período actual.</div>';
+    if (PROXY_URL === "REEMPLAZAR_CON_TU_APPS_SCRIPT_URL") {
+      // MODO DEMO: mostrar estructura de ejemplo
+      data = getDemoData(raw);
     } else {
-      listaEl.innerHTML = entidadesList.slice(0,8).map(e => {
-        const c = CALIFMAP[e.situacion] || CALIFMAP[1];
-        return `<div class="deuda-row">
-          <div>
-            <div class="deuda-entidad">${e.entidad || 'Entidad desconocida'}</div>
-            <div class="deuda-meta">Período: ${e.periodo || '—'} · Situación: ${e.situacion || 1}</div>
-          </div>
-          <div class="deuda-monto">
-            <div style="font-size:13px; font-weight:500;">${e.monto ? '$'+Math.round(e.monto).toLocaleString('es-AR') : '—'}</div>
-            <div style="margin-top:3px;"><span class="calif-badge ${c.cls}" style="font-size:10px; padding:2px 8px;">${c.label}</span></div>
-          </div>
-        </div>`;
-      }).join('');
+      const res = await fetch(`${PROXY_URL}?url=${encodeURIComponent(raw)}`);
+      data = await res.json();
+      if (data.error) throw new Error(data.error);
+      data = data.data;
     }
 
-    let cheques = [];
-    if (chequesRaw && chequesRaw.results && chequesRaw.results.cheques) cheques = chequesRaw.results.cheques;
-    document.getElementById('res-cheques').textContent = cheques.length;
+    renderResult(data, raw);
 
-    const chequesCard = document.getElementById('card-cheques');
-    if (cheques.length > 0) {
-      chequesCard.style.display = 'block';
-      document.getElementById('cheques-lista').innerHTML = `
-        <table class="cheques-table">
-          <thead><tr><th>N° Cheque</th><th>Monto</th><th>Fecha rechazo</th><th>Motivo</th></tr></thead>
-          <tbody>${cheques.slice(0,5).map(ch=>`<tr>
-            <td>${ch.nroCheque||'—'}</td>
-            <td>$${ch.monto?Math.round(ch.monto).toLocaleString('es-AR'):'—'}</td>
-            <td>${ch.fechaRechazo||'—'}</td>
-            <td>${ch.motivoRechazo||'—'}</td>
-          </tr>`).join('')}</tbody>
-        </table>`;
-    } else {
-      chequesCard.style.display = 'none';
-    }
-
-    bcraData = { cuit, peorCalif, califInfo, entidades: entidadesList, deudaTotal, cheques, periodos };
-    buildPlanAcciones(bcraData);
+  } catch (err) {
+    renderError(err.message || "Error desconocido");
+  } finally {
+    document.getElementById("loading").classList.remove("visible");
+    document.getElementById("fetch-btn").disabled = false;
   }
+}
 
-  function renderInformeDemoAnterior(cuit, err) {
-    const demoData = {
-      cuit,
-      periodos: [{
-        periodo: '202503',
-        entidades: [
-          { entidad: 'Banco Nación Argentina', situacion: 1, monto: 450 },
-          { entidad: 'Tarjeta Naranja X', situacion: 2, monto: 85 },
-          { entidad: 'Mercado Crédito', situacion: 1, monto: 120 },
-        ]
-      }]
-    };
+// ── RENDER ────────────────────────────────────────────────────
+function renderResult(d, originalUrl) {
+  const cuitMatch = originalUrl.match(/cuit=(\d+)/);
+  const cuit = cuitMatch ? formatCUIT(cuitMatch[1]) : "CUIT no detectado";
+  const nombre = d.titular || "Titular";
+  const initials = getInitials(nombre);
 
-    const msgNote = document.createElement('div');
-    msgNote.className = 'info-note';
-    msgNote.style.marginBottom = '1rem';
-    msgNote.innerHTML = `<i class="ti ti-wifi-off" style="flex-shrink:0" aria-hidden="true"></i><span>La API del BCRA no pudo respondernos en este momento (puede ser por CORS en navegador). Mostramos datos de <strong>ejemplo</strong> para que veas cómo funciona el análisis. Para consultar datos reales, usá el botón oficial del BCRA en el paso 1.</span>`;
-    document.getElementById('panel2').insertBefore(msgNote, document.getElementById('resultado-bcra'));
-    renderInforme(cuit, demoData, null);
-  }
+  // Calcular situación máxima
+  const maxSit = calcMaxSit(d);
 
-  function buildPlanAcciones(data) {
-    const acciones = [];
-    if (data.peorCalif >= 2) {
-      acciones.push({ icon:'ti-coin', title:'Regularizá las deudas en situación 2 o mayor', desc:'Contactá a las entidades con calificación 2 o superior. Muchas aceptan planes de pago o quitas. La situación mejora en el siguiente período que informan.', tag:'Alta prioridad', tagCls:'tag-negativo' });
-    }
-    if (data.cheques.length > 0) {
-      acciones.push({ icon:'ti-file-invoice', title:'Cancelá los cheques rechazados', desc:'Los cheques rechazados son uno de los factores más graves. Podés regularizarlos pagando el importe más intereses al banco girado y solicitando la rehabilitación.', tag:'Crítico', tagCls:'tag-negativo' });
-    }
-    acciones.push({ icon:'ti-clock', title:'Revisá el informe cada 60 días', desc:'Las entidades actualizan la información mensualmente. Verificá que las deudas canceladas figuren como "situación 1" en el informe siguiente. Si no se actualiza, tenés derecho a reclamar.', tag:'Seguimiento', tagCls:'tag-neutro' });
-    acciones.push({ icon:'ti-shield-check', title:'Conservá comprobantes de pago', desc:'Guardá todos los recibos de cancelación. Son tu evidencia ante un reclamo si la entidad no actualiza el dato correctamente.', tag:'Preventivo', tagCls:'tag-positivo' });
-    acciones.push({ icon:'ti-chart-line', title:'Mantené crédito activo en situación normal', desc:'Tener al menos una línea de crédito activa y al día (tarjeta con saldo 0 o préstamo vigente) construye historial positivo. Las entidades valoran el historial de cumplimiento.', tag:'Mejora continua', tagCls:'tag-positivo' });
-    if (data.peorCalif === 1 && data.entidades.length === 0) {
-      acciones.unshift({ icon:'ti-star', title:'¡Sin deudas registradas!', desc:'No tenés deudas informadas al BCRA. Para construir historial crediticio, podés solicitar una tarjeta de crédito con bajo límite y utilizarla regularmente cancelando el resumen completo.', tag:'Excelente', tagCls:'tag-positivo' });
-    }
-
-    document.getElementById('plan-acciones').innerHTML = acciones.map((a,i)=>`
-      <div style="display:flex; gap:12px; padding:12px 0; border-bottom:0.5px solid var(--color-border-tertiary);" id="accion-${i}">
-        <div style="min-width:36px; height:36px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); display:flex; align-items:center; justify-content:center; color:#185FA5; font-size:18px;">
-          <i class="ti ${a.icon}" aria-hidden="true"></i>
-        </div>
-        <div>
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-            <span style="font-size:13px; font-weight:500;">${a.title}</span>
-            <span class="${a.tagCls}" style="font-size:10px;">${a.tag}</span>
-          </div>
-          <div style="font-size:12px; color:var(--color-text-secondary); line-height:1.5;">${a.desc}</div>
-        </div>
+  const html = `
+    <div class="titular-header">
+      <div class="titular-avatar">${initials}</div>
+      <div>
+        <div class="titular-name">${escHtml(nombre)}</div>
+        <div class="titular-meta">CUIT/CUIL: ${escHtml(cuit)}</div>
       </div>
-    `).join('');
-  }
-
-  async function iniciarAnalisis() {
-    goStep(3);
-    document.getElementById('ai-loading').style.display = 'block';
-    document.getElementById('ai-resultado').style.display = 'none';
-
-    const msgs = ['Analizando tu situación crediticia...', 'Evaluando cada entidad informante...', 'Preparando recomendaciones personalizadas...'];
-    let mi = 0;
-    const iv = setInterval(()=>{ document.getElementById('ai-loading-msg').textContent = msgs[mi++ % msgs.length]; }, 1500);
-
-    try {
-      const prompt = `Sos un asesor de crédito argentino experto en el sistema financiero regulado por el BCRA. Analizás datos de la Central de Deudores del Banco Central de la República Argentina.
-
-Datos del informe BCRA:
-- CUIT consultado: ${bcraData.cuit}
-- Calificación peor período: ${bcraData.peorCalif} (${bcraData.califInfo.label})
-- Entidades que informaron: ${bcraData.entidades.length}
-- Deuda total estimada (en miles de pesos): ${bcraData.deudaTotal}
-- Cheques rechazados: ${bcraData.cheques.length}
-- Detalle entidades: ${JSON.stringify(bcraData.entidades.slice(0,5).map(e=>({entidad:e.entidad, situacion:e.situacion, monto:e.monto})))}
-
-Generá un análisis claro, humano y concreto de máximo 200 palabras. Incluí:
-1. Un diagnóstico directo de la situación (1-2 oraciones)
-2. Los puntos más importantes a atender (con **negrita** para destacar)
-3. Una frase motivadora al final
-
-Respondé en español rioplatense. No uses markdown headers, solo párrafos y negritas. No menciones que sos IA.`;
-
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }]
-        })
-      });
-
-      clearInterval(iv);
-      const data = await resp.json();
-      let text = (data.content && data.content[0] && data.content[0].text) || 'No se pudo generar el análisis.';
-      text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-      document.getElementById('ai-texto').innerHTML = text;
-      aiAnalysis = text;
-
-    } catch(e) {
-      clearInterval(iv);
-      const fallback = generarAnalisisFallback(bcraData);
-      document.getElementById('ai-texto').innerHTML = fallback;
-    }
-
-    document.getElementById('ai-loading').style.display = 'none';
-    document.getElementById('ai-resultado').style.display = 'block';
-  }
-
-  function generarAnalisisFallback(data) {
-    const c = data.califInfo;
-    let txt = '';
-    if (data.peorCalif === 1 && data.entidades.length === 0) {
-      txt = `Tu situación crediticia es <strong>excelente</strong>. No tenés deudas registradas en la Central de Deudores del BCRA, lo que te da una base sólida para acceder a financiamiento en condiciones favorables.<br><br>El próximo paso es <strong>construir historial activo</strong>: tener al menos una línea de crédito en uso y al día (tarjeta de crédito cancelando el total cada mes) hace que los bancos te vean como un deudor confiable.<br><br>¡Seguí así y las puertas del crédito van a estar abiertas para vos!`;
-    } else if (data.peorCalif <= 2) {
-      txt = `Tu situación crediticia está en <strong>${c.label}</strong>. Hay una o más financiaciones que requieren atención para volver a la situación normal.<br><br>El paso más importante es <strong>regularizar las obligaciones en situación 2</strong> cuanto antes: contactá directamente a las entidades para negociar un plan de pago. Una vez que la deuda figure como cancelada, la calificación mejora en el próximo informe mensual.<br><br>Con constancia y un plan claro, la recuperación del crédito es totalmente posible.`;
-    } else {
-      txt = `Tu historial muestra <strong>${c.label}</strong> en algunas entidades. Es una situación que tiene solución, pero requiere acción rápida y ordenada.<br><br>Priorizá <strong>cancelar o acordar</strong> con las entidades de mayor calificación negativa. Muchos bancos y fintechs tienen programas de regularización con quitas. Si encontrás datos incorrectos, podés reclamar gratuitamente ante el BCRA.<br><br>Cada deuda regularizada es un paso concreto hacia la recuperación — esto tiene solución.`;
-    }
-    return txt;
-  }
-
-  const faqs = [
-    { q:'¿Cuánto tarda en actualizarse el informe del BCRA?', a:'Las entidades informan mensualmente. Después de cancelar una deuda, puede tardar hasta 30 días en reflejarse como situación 1 en el informe.' },
-    { q:'¿Puedo pedir que borren mis datos del BCRA?', a:'No podés pedir que borren datos correctos. Sí podés rectificar datos incorrectos o ejercer otros derechos ARCO. Los datos de cheques rechazados se eliminan automáticamente a los 24 meses.' },
-    { q:'¿El reclamo ante el BCRA tiene costo?', a:'No. Todos los canales de reclamo del Banco Central son completamente gratuitos.' },
-    { q:'¿Qué pasa si la entidad no corrige el dato?', a:'Si en 10 días hábiles la entidad no corrigió el error, podés escalar al BCRA. Si el BCRA tampoco resuelve, podés recurrir a la Agencia de Acceso a la Información Pública para ejercer tus derechos sobre datos personales.' },
-  ];
-
-  document.getElementById('faqs').innerHTML = faqs.map((f,i)=>`
-    <div style="border-bottom:0.5px solid var(--color-border-tertiary); padding:10px 0; cursor:pointer;" onclick="toggleFaq(${i})">
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:500;">
-        <span>${f.q}</span>
-        <i class="ti ti-chevron-down" id="faq-icon-${i}" aria-hidden="true" style="font-size:14px; color:var(--color-text-secondary); transition:transform 0.2s;"></i>
+      <div class="sit-badge" style="background:${catBg(maxSit)};color:${catColor(maxSit)};border-color:${catColor(maxSit)};justify-content:center;">
+        <span class="num">${maxSit}</span>
+        <span class="lbl">SIT.</span>
       </div>
-      <div id="faq-ans-${i}" style="display:none; font-size:12px; color:var(--color-text-secondary); margin-top:6px; line-height:1.5;">${f.a}</div>
     </div>
-  `).join('');
 
-  function toggleFaq(i) {
-    const el = document.getElementById('faq-ans-'+i);
-    const ic = document.getElementById('faq-icon-'+i);
-    const open = el.style.display !== 'none';
-    el.style.display = open ? 'none' : 'block';
-    ic.style.transform = open ? '' : 'rotate(180deg)';
+    <div class="tabs">
+      <button class="tab active" data-tab="entidades">Entidades (${d.entidades ? d.entidades.length : 0})</button>
+      <button class="tab" data-tab="cheques">Cheques (${d.cheques ? d.cheques.length : 0})</button>
+      <button class="tab" data-tab="historial">Historial (${d.historial ? d.historial.length : 0})</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-entidades">
+      ${renderEntidades(d.entidades)}
+    </div>
+    <div class="tab-panel" id="tab-cheques">
+      ${renderCheques(d.cheques)}
+    </div>
+    <div class="tab-panel" id="tab-historial">
+      ${renderHistorial(d.historial)}
+    </div>
+
+    <button class="raw-toggle" id="raw-toggle">Ver datos crudos (debug)</button>
+    <div class="raw-box" id="raw-box">${escHtml(JSON.stringify(d, null, 2))}</div>
+  `;
+
+  const container = document.getElementById("result");
+  container.innerHTML = html;
+  container.classList.add("visible");
+
+  // Tabs
+  container.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      container.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      container.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      container.querySelector(`#tab-${tab.dataset.tab}`).classList.add("active");
+    });
+  });
+
+  // Accordions
+  container.querySelectorAll(".dc-head").forEach(head => {
+    head.addEventListener("click", () => {
+      head.classList.toggle("open");
+      head.nextElementSibling.classList.toggle("open");
+    });
+  });
+
+  // Raw toggle
+  document.getElementById("raw-toggle").addEventListener("click", function() {
+    document.getElementById("raw-box").classList.toggle("open");
+    this.textContent = document.getElementById("raw-box").classList.contains("open")
+      ? "Ocultar datos crudos" : "Ver datos crudos (debug)";
+  });
+
+  setTimeout(() => container.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+}
+
+function renderEntidades(ents) {
+  if (!ents || ents.length === 0) return `<div class="empty"><span>🏦</span>No se encontraron entidades en el informe</div>`;
+
+  return ents.map((e, i) => {
+    const entidad = e.entidad || (e.raw && e.raw[0]) || e.raw_text || `Entidad ${i + 1}`;
+    const monto = e.monto || (e.raw && e.raw.find(c => /^\$|^\d[\d\.]+$/.test(c))) || "—";
+    const sitNum = e.situacion || detectSit(e.raw || []);
+    const dias = e.dias_atraso || (e.raw && e.raw.find(c => /\d+\s*d[ií]/i.test(c))) || null;
+    const sitLabel = sitLabels[sitNum] || `Situación ${sitNum}`;
+
+    const cells = e.raw || (e.raw_text ? [e.raw_text] : []);
+
+    return `
+      <div class="data-card">
+        <div class="dc-head">
+          <span class="dc-entity">${escHtml(entidad)}</span>
+          <div class="dc-meta">
+            <span class="dc-monto">${escHtml(monto)}</span>
+            ${sitNum ? `<span class="sit-pill s${sitNum}">${sitLabel}</span>` : ""}
+            <span class="chevron">▾</span>
+          </div>
+        </div>
+        <div class="dc-body">
+          <div class="detail-grid">
+            ${dias ? `<div class="dg-item"><div class="dg-label">Días de atraso</div><div class="dg-value">${escHtml(dias)}</div></div>` : ""}
+            ${sitNum ? `<div class="dg-item"><div class="dg-label">Situación</div><div class="dg-value" style="color:${catColor(sitNum)}">${sitLabel}</div></div>` : ""}
+            ${cells.map((c, ci) => c !== entidad && c !== monto && c !== dias
+              ? `<div class="dg-item"><div class="dg-label">Campo ${ci + 1}</div><div class="dg-value">${escHtml(c)}</div></div>`
+              : "").join("")}
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function renderCheques(cheques) {
+  if (!cheques || cheques.length === 0) return `<div class="empty"><span>✅</span>Sin cheques rechazados registrados</div>`;
+  return cheques.map(ch => {
+    const cells = ch.raw || [ch.raw_text || "Sin datos"];
+    return `<div class="cheque-row">${cells.map(c => `<span>${escHtml(c)}</span>`).join('<span style="color:var(--muted)">·</span>')}</div>`;
+  }).join("");
+}
+
+function renderHistorial(hist) {
+  if (!hist || hist.length === 0) return `<div class="empty"><span>📅</span>Historial no disponible</div>`;
+  return `<div class="hist-grid">${hist.map(h => {
+    const per = h.periodo || (h.raw && h.raw[0]) || "—";
+    const sit = h.situacion || (h.raw && detectSit(h.raw)) || "?";
+    return `
+      <div class="hist-cell">
+        <div class="hist-periodo">${escHtml(per)}</div>
+        <div class="hist-sit" style="color:${catColor(sit)}">${escHtml(String(sit))}</div>
+      </div>`;
+  }).join("")}</div>`;
+}
+
+function renderError(msg) {
+  document.getElementById("result").innerHTML = `
+    <div class="main-card">
+      <div style="color:var(--red);font-weight:500;margin-bottom:.5rem">⚠ No se pudo obtener el informe</div>
+      <div style="color:var(--muted);font-size:.875rem">${escHtml(msg)}</div>
+      <div style="margin-top:1rem;font-size:.82rem;color:var(--muted)">
+        Causas posibles: el token expiró, el proxy no está configurado, o el BCRA está temporalmente inaccesible.
+      </div>
+    </div>`;
+  document.getElementById("result").classList.add("visible");
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+const sitLabels = {
+  "1":"Normal","2":"Seg. especial","3":"Con problemas","4":"Alto riesgo","5":"Irrecuperable","6":"En quiebra"
+};
+
+function catColor(n) {
+  const map = {"1":"#10b981","2":"#f59e0b","3":"#f97316","4":"#ef4444","5":"#dc2626","6":"#fca5a5"};
+  return map[String(n)] || "#8896b0";
+}
+function catBg(n) {
+  const map = {"1":"rgba(16,185,129,.12)","2":"rgba(245,158,11,.1)","3":"rgba(249,115,22,.1)","4":"rgba(239,68,68,.1)","5":"rgba(220,38,38,.15)","6":"rgba(153,27,27,.2)"};
+  return map[String(n)] || "transparent";
+}
+function calcMaxSit(d) {
+  let max = 1;
+  if (d.entidades) d.entidades.forEach(e => {
+    const s = parseInt(e.situacion || detectSit(e.raw || []));
+    if (s > max) max = s;
+  });
+  return max;
+}
+function detectSit(cells) {
+  for (const c of cells) {
+    const m = String(c).match(/^[1-6]$/);
+    if (m) return m[0];
   }
+  return null;
+}
+function getInitials(name) {
+  return name.split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "?";
+}
+function formatCUIT(n) {
+  if (n.length === 11) return `${n.slice(0,2)}-${n.slice(2,10)}-${n.slice(10)}`;
+  return n;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// ── DEMO DATA (cuando el proxy no está configurado) ───────────
+function getDemoData(url) {
+  const cuitMatch = url.match(/cuit=(\d+)/);
+  return {
+    titular: "GARCIA ROBERTO PABLO",
+    entidades: [
+      { entidad: "BANCO GALICIA S.A.", monto: "$245.600", situacion: "1", dias_atraso: "0 días", raw: ["BANCO GALICIA S.A.","$245.600","1","0 días"] },
+      { entidad: "MERCADOCRÉDITO", monto: "$18.500", situacion: "2", dias_atraso: "45 días", raw: ["MERCADOCRÉDITO","$18.500","2","45 días"] },
+      { entidad: "BANCO NACIÓN", monto: "$89.000", situacion: "1", dias_atraso: "0 días", raw: ["BANCO NACIÓN","$89.000","1","0 días"] },
+    ],
+    cheques: [],
+    historial: [
+      {periodo:"04/2025",situacion:"1"},{periodo:"03/2025",situacion:"1"},
+      {periodo:"02/2025",situacion:"2"},{periodo:"01/2025",situacion:"2"},
+      {periodo:"12/2024",situacion:"1"},{periodo:"11/2024",situacion:"1"},
+      {periodo:"10/2024",situacion:"1"},{periodo:"09/2024",situacion:"1"},
+    ],
+    raw_length: 0,
+    _demo: true,
+  };
+}
 </script>
+</body>
+</html>
