@@ -481,14 +481,15 @@ if (h.periodos && h.periodos.length > 0) {
       + '</div>'
       + '<div style="display:flex;flex-wrap:wrap;gap:5px">';
 
-    registros.forEach(function(r) {
-      var info = si(r.situacion);
-      html += '<div title="' + fmt(r.monto) + '" style="background:var(--s3);border:.5px solid var(--b2);border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;align-items:center;min-width:56px">'
-        + '<span style="font-size:.6rem;color:var(--muted);letter-spacing:.04em">' + fmtPeriodo(r.periodo) + '</span>'
-        + '<span class="sdot" style="background:' + info.dot + ';width:8px;height:8px;margin:3px 0"></span>'
-        + '<span style="font-size:.65rem;font-weight:500;color:' + info.dot + '">Sit. ' + r.situacion + '</span>'
-        + '</div>';
-    });
+   registros.forEach(function(r) {
+  var info = si(r.situacion);
+  html += '<div style="background:var(--s3);border:.5px solid var(--b2);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column;align-items:center;width:110px">'
+    + '<span style="font-size:.6rem;color:var(--muted);letter-spacing:.04em;white-space:nowrap">' + fmtPeriodo(r.periodo) + '</span>'
+    + '<span class="sdot" style="background:' + info.dot + ';width:8px;height:8px;flex-shrink:0;margin:4px 0"></span>'
+    + '<span style="font-size:.65rem;font-weight:500;color:' + info.dot + ';margin-bottom:4px">Sit. ' + r.situacion + '</span>'
+    + '<span style="font-size:.6875rem;font-weight:500;color:var(--text);white-space:nowrap;letter-spacing:-.01em">' + fmt(r.monto) + '</span>'
+    + '</div>';
+});
 
     html += '</div></div>';
   });
