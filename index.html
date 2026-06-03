@@ -11,7 +11,7 @@
 
 body{
     font-family:Arial,sans-serif;
-    max-width:900px;
+    max-width:1000px;
     margin:40px auto;
     padding:20px;
 }
@@ -38,6 +38,18 @@ button{
     padding:10px 0;
 }
 
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:6px;
+    text-align:left;
+}
+
 .error{
     color:red;
 }
@@ -50,9 +62,8 @@ button{
 <h1>Consulta BCRA</h1>
 
 <input
-    id="cuit"
-    placeholder="Ingrese CUIT/CUIL"
->
+id="cuit"
+placeholder="Ingrese CUIT/CUIL">
 
 <button onclick="consultar()">
 Consultar
@@ -68,79 +79,115 @@ const API =
 async function consultar(){
 
     const cuit =
-        document.getElementById("cuit").value.trim();
+      document.getElementById("cuit").value.trim();
 
     const resultado =
-        document.getElementById("resultado");
+      document.getElementById("resultado");
 
     resultado.innerHTML = "Consultando...";
 
     try{
 
-        const response =
-            await fetch(
-                `${API}?cuit=${cuit}`
-            );
+      const response =
+        await fetch(`${API}?cuit=${cuit}`);
 
-        const json =
-            await response.json();
+      const json =
+        await response.json();
 
-        if(!json.ok){
+      if(!json.ok){
 
-            resultado.innerHTML =
-                `<p class="error">${json.error}</p>`;
+        resultado.innerHTML =
+          `<p class="error">${json.error}</p>`;
 
-            return;
-        }
+        return;
+      }
 
-        const data = json.data.results;
+      let html = "";
 
-        let html = "";
+      const actual =
+        json.actual.results;
+
+      html += `
+      <div class="card">
+        <h2>${actual.denominacion}</h2>
+        <p><strong>CUIT:</strong> ${actual.identificacion}</p>
+      </div>
+      `;
+
+      actual.periodos.forEach(periodo => {
 
         html += `
         <div class="card">
-            <h2>${data.denominacion}</h2>
-            <p><strong>CUIT:</strong> ${data.identificacion}</p>
-        </div>
+          <h3>Periodo ${periodo.periodo}</h3>
         `;
 
-        data.periodos.forEach(periodo => {
+        periodo.entidades.forEach(entidad => {
 
-            html += `
-            <div class="card">
-                <h3>Periodo ${periodo.periodo}</h3>
-            `;
+          html += `
+          <div class="entidad">
 
-            periodo.entidades.forEach(entidad => {
+            <strong>${entidad.entidad}</strong><br>
 
-                html += `
-                <div class="entidad">
-                    <strong>${entidad.entidad}</strong><br>
+            Situación:
+            ${entidad.situacion}<br>
 
-                    Situación:
-                    ${entidad.situacion}<br>
+            Monto:
+            $${entidad.monto.toLocaleString("es-AR")}<br>
 
-                    Monto:
-                    $${entidad.monto.toLocaleString("es-AR")}<br>
+            Días atraso:
+            ${entidad.diasAtrasoPago}
 
-                    Días atraso:
-                    ${entidad.diasAtrasoPago}
-                </div>
-                `;
+          </div>
+          `;
+        });
 
-            });
+        html += `</div>`;
 
-            html += "</div>";
+      });
+
+      if(
+        json.historica &&
+        json.historica.results &&
+        json.historica.results.length
+      ){
+
+        html += `
+        <div class="card">
+          <h2>Historial Crediticio</h2>
+        `;
+
+        json.historica.results.forEach(item => {
+
+          html += `
+          <table>
+            <tr>
+              <th>Periodo</th>
+              <th>Situación</th>
+              <th>Monto</th>
+            </tr>
+
+            <tr>
+              <td>${item.periodo}</td>
+              <td>${item.situacion}</td>
+              <td>$${Number(item.monto || 0).toLocaleString("es-AR")}</td>
+            </tr>
+          </table>
+
+          <br>
+          `;
 
         });
 
-        resultado.innerHTML = html;
+        html += `</div>`;
+      }
+
+      resultado.innerHTML = html;
 
     }
     catch(err){
 
-        resultado.innerHTML =
-            `<p class="error">${err}</p>`;
+      resultado.innerHTML =
+        `<p class="error">${err}</p>`;
 
     }
 
