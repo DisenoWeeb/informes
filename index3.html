@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudio Tango — Recuperación Crediticia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bordo:#6B0F1A;--bordo2:#8B1525;--bordo-dark:#3D0810;
+  --gold:#C9A84C;--gold2:#E2C16A;--gold-dim:#7A6030;
+  --bg:#0D0D0D;--s1:#181818;--s2:#202020;--s3:#282828;
+  --text:#EDE9E3;--muted:#7A7570;--muted2:#4A4744;
+  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);
+  --serif:'Cormorant Garamond',serif;
+  --sans:'DM Sans',sans-serif;
+}
+html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0}
+
+/* ────── LAYOUT ────── */
+.layout{display:flex;height:100vh;overflow:hidden}
+
+/* ────── SIDEBAR ────── */
+.sidebar{
+  width:340px;flex-shrink:0;
+  background:var(--bordo-dark);
+  border-right:1px solid rgba(201,168,76,.1);
+  display:flex;flex-direction:column;
+  padding:2.25rem 2rem;
+  overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:2.5rem}
+.brand-mark{
+  width:38px;height:38px;border-radius:7px;
+  background:var(--gold);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-mark i{font-size:20px;color:var(--bordo-dark)}
+.brand-name{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--text);letter-spacing:.04em;line-height:1.2}
+.brand-sub{font-size:9px;color:rgba(201,168,76,.45);letter-spacing:.13em;text-transform:uppercase;margin-top:2px}
+
+.sidebar h1{
+  font-family:var(--serif);font-size:2rem;font-weight:500;
+  line-height:1.2;color:var(--text);letter-spacing:-.01em;
+  margin-bottom:1rem;
+}
+.sidebar h1 em{font-style:italic;color:var(--gold2)}
+.sidebar-desc{
+  font-size:.875rem;color:var(--muted);line-height:1.75;
+  font-weight:300;margin-bottom:2rem;
+}
+
+.steps{display:flex;flex-direction:column;gap:.9rem;margin-bottom:auto}
+.step{display:flex;gap:13px;align-items:flex-start}
+.step-n{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  border:1px solid var(--gold-dim);margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:12px;color:var(--gold);
+}
+.step-b strong{display:block;font-size:.8125rem;font-weight:500;color:var(--text);margin-bottom:2px}
+.step-b span{font-size:.75rem;color:var(--muted);line-height:1.55}
+
+.sidebar-foot{
+  margin-top:2rem;padding-top:1.5rem;
+  border-top:1px solid var(--b1);
+  font-size:.7rem;color:var(--muted2);line-height:1.65;
+}
+.sidebar-foot a{color:var(--gold-dim);text-decoration:none}
+.sidebar-foot a:hover{color:var(--gold)}
+
+/* ────── MAIN ────── */
+.main{flex:1;overflow-y:auto;padding:2rem 2rem 3rem;display:flex;flex-direction:column;gap:0}
+
+.top-label{
+  font-size:.65rem;font-weight:500;color:var(--gold-dim);
+  text-transform:uppercase;letter-spacing:.12em;margin-bottom:.65rem;
+}
+
+/* ────── SEARCH ────── */
+.search-card{
+  background:var(--s1);border:.5px solid var(--b2);
+  border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;
+}
+.search-inner-lbl{
+  font-size:.65rem;font-weight:500;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
+}
+.input-row{display:flex;gap:8px}
+#cuit{
+  flex:1;font-size:15px;padding:11px 13px;border-radius:8px;
+  border:.5px solid var(--b2);background:var(--s2);
+  color:var(--text);outline:none;font-family:var(--sans);
+}
+#cuit::placeholder{color:var(--muted2)}
+#cuit:focus{border-color:var(--gold-dim)}
+.btn-consultar{
+  background:var(--bordo);color:var(--text);
+  border:.5px solid var(--bordo2);border-radius:8px;
+  padding:11px 20px;font-size:.875rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);letter-spacing:.02em;
+  white-space:nowrap;
+}
+.btn-consultar:hover{background:var(--bordo2)}
+.btn-consultar:active{transform:scale(.97)}
+
+.prog-wrap{margin-top:.85rem;display:none}
+.prog-bg{height:2px;background:var(--s3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;width:0%;background:var(--gold);transition:width .4s ease;border-radius:2px}
+.prog-lbl{font-size:.68rem;color:var(--muted);margin-top:5px;letter-spacing:.02em}
+
+/* ────── RESULTADO ────── */
+#resultado{display:flex;flex-direction:column;gap:1rem}
+
+.result-header{
+  background:var(--bordo-dark);border:.5px solid rgba(201,168,76,.18);
+  border-radius:12px;padding:1.1rem 1.25rem;
+  display:flex;align-items:center;gap:12px;
+}
+.avatar{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:17px;color:var(--gold);
+}
+.rh-name{font-size:.9375rem;font-weight:500;color:var(--text);line-height:1.3}
+.rh-cuit{font-size:.72rem;color:rgba(201,168,76,.45);margin-top:2px;letter-spacing:.04em}
+
+.score-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.score-box{
+  background:var(--s1);border:.5px solid var(--b1);
+  border-radius:10px;padding:13px;text-align:center;
+}
+.score-val{font-size:1.75rem;font-weight:400;font-family:var(--serif);line-height:1}
+.score-lbl{font-size:.6rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+.score-sub{font-size:.6875rem;font-weight:500;margin-top:4px}
+
+/* ────── SECCIÓN ────── */
+.sec-wrap{background:var(--s1);border:.5px solid var(--b1);border-radius:12px;overflow:hidden}
+.sec-head{
+  padding:.85rem 1.25rem;border-bottom:.5px solid var(--b1);
+  display:flex;align-items:center;gap:8px;
+}
+.sec-head i{font-size:16px;color:var(--gold-dim)}
+.sec-head-title{font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.sec-body{padding:1rem 1.25rem}
+
+/* ────── DEUDA CARD ────── */
+.deuda-item{
+  background:var(--s2);border:.5px solid var(--b1);
+  border-radius:9px;padding:.9rem 1rem;
+}
+.deuda-item+.deuda-item{margin-top:7px}
+.deuda-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px}
+.deuda-ent{font-size:.8125rem;font-weight:500;color:var(--text);line-height:1.35;flex:1}
+.badge{font-size:.6rem;font-weight:500;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;letter-spacing:.03em}
+.s1c{background:rgba(74,155,111,.15);color:#6DBF95;border:.5px solid rgba(74,155,111,.25)}
+.s2c{background:rgba(201,168,76,.12);color:#E2C16A;border:.5px solid rgba(201,168,76,.2)}
+.s3c{background:rgba(186,117,23,.12);color:#D4943A;border:.5px solid rgba(186,117,23,.2)}
+.s4c{background:rgba(192,57,43,.12);color:#E8705F;border:.5px solid rgba(192,57,43,.2)}
+.s5c{background:rgba(163,45,45,.18);color:#F08070;border:.5px solid rgba(163,45,45,.25)}
+.s6c{background:rgba(80,75,72,.2);color:#8A8480;border:.5px solid var(--b2)}
+.deuda-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ds{background:var(--s3);border-radius:7px;padding:7px 10px}
+.ds-val{font-size:.875rem;font-weight:500;color:var(--text)}
+.ds-lbl{font-size:.6rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+
+/* ────── HISTORIAL TABLE ────── */
+.hist-wrap{overflow-x:auto;border-radius:0}
+.hist-table{border-collapse:collapse;width:100%;min-width:420px}
+.hist-table th{
+  background:var(--s2);color:var(--muted);font-weight:500;
+  padding:8px 12px;text-align:left;border-bottom:.5px solid var(--b2);
+  font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;
+}
+.hist-table td{
+  padding:8px 12px;border-bottom:.5px solid var(--b1);
+  color:var(--text);font-size:.8125rem;vertical-align:middle;
+}
+.hist-table tr:last-child td{border-bottom:none}
+.hist-table tbody tr:hover{background:var(--s2)}
+.sdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
+/* ────── PERIODO LABEL ────── */
+.periodo-lbl{
+  font-size:.65rem;color:var(--gold-dim);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:.6rem;margin-top:.85rem;
+}
+.periodo-lbl:first-child{margin-top:0}
+
+/* ────── EMPTY / ERROR ────── */
+.empty-state{text-align:center;padding:1.75rem;color:var(--muted);font-size:.8125rem}
+.empty-state i{font-size:26px;display:block;margin-bottom:.6rem;color:var(--muted2)}
+.error-box{
+  background:var(--s1);border:.5px solid rgba(192,57,43,.3);
+  border-radius:10px;padding:1.1rem 1.25rem;text-align:center;
+  color:#E8705F;font-size:.8125rem;display:flex;align-items:center;gap:10px;justify-content:center;
+}
+.error-box i{font-size:18px;flex-shrink:0}
+
+/* ────── CTA ────── */
+.cta-card{
+  background:var(--s1);border:.5px solid rgba(201,168,76,.18);
+  border-radius:12px;padding:1.25rem;
+}
+.cta-card p{font-size:.8125rem;color:var(--muted);line-height:1.65;margin-bottom:1rem}
+.cta-card strong{color:var(--gold2);font-weight:500}
+.cta-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-primary{
+  background:var(--bordo);color:var(--text);border:.5px solid var(--bordo2);
+  border-radius:8px;padding:10px;font-size:.8125rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);text-align:center;
+}
+.btn-secondary{
+  background:var(--s2);color:var(--text);border:.5px solid var(--b2);
+  border-radius:8px;padding:10px;font-size:.8125rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);text-align:center;
+}
+.btn-primary:hover{background:var(--bordo2)}
+.btn-secondary:hover{background:var(--s3)}
+.btn-primary:active,.btn-secondary:active{transform:scale(.97)}
+
+/* ────── MOBILE ────── */
+@media(max-width:860px){
+  .layout{flex-direction:column;height:auto;overflow:visible}
+  .sidebar{width:100%;flex-shrink:0;padding:1.75rem 1.5rem}
+  .sidebar h1{font-size:1.6rem}
+  .main{padding:1.5rem 1.25rem 3rem}
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><i class="ti ti-scale" aria-hidden="true"></i></div>
+      <div>
+        <div class="brand-name">Estudio Tango</div>
+        <div class="brand-sub">Recuperación crediticia</div>
+      </div>
+    </div>
+
+    <h1>Salí de las bases de riesgo.<br><em>Recuperá tu crédito.</em></h1>
+    <p class="sidebar-desc">Consultamos tu situación en la Central de Deudores del Banco Central. Identificamos deudas, entidades y plazos para diseñar un plan de recuperación a tu medida.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-b">
+          <strong>Diagnóstico completo</strong>
+          <span>Deudas, entidades, montos y situación ante el BCRA.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-b">
+          <strong>Plan de regularización</strong>
+          <span>Cancelar, negociar o impugnar según cada caso.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-b">
+          <strong>Salida del sistema de riesgo</strong>
+          <span>Acompañamos hasta que tu historial quede limpio y activo.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-foot">
+      Datos oficiales de <a href="https://www.bcra.gob.ar" target="_blank" rel="noopener">bcra.gob.ar</a> — información pública y gratuita.<br>
+      Este sitio no es parte del Banco Central de la República Argentina.
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <div class="top-label">Consulta gratuita · Central de deudores BCRA</div>
+
+    <div class="search-card">
+      <div class="search-inner-lbl">Informe crediticio</div>
+      <div class="input-row">
+        <input id="cuit" type="tel" placeholder="CUIT / CUIL sin guiones" inputmode="numeric" autocomplete="off">
+        <button class="btn-consultar" onclick="consultar()">Consultar</button>
+      </div>
+      <div class="prog-wrap" id="prog-wrap">
+        <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
+        <div class="prog-lbl" id="prog-lbl">Iniciando consulta...</div>
+      </div>
+    </div>
+
+    <div id="resultado"></div>
+  </main>
+
+</div>
+
+<script>
+// ── REEMPLAZÁ ESTA URL CON LA DE TU APPS SCRIPT ──
+const API = "https://script.google.com/macros/s/AKfycby29NcU3FPBzkdv3l9Cz_eNBgpmLnTNmnOtkqROAxxt4QXi3YzH77AQCXqMXY7pAba-1Q/exec";
+
+const SITS = {
+  1: { label: "Al día",          cls: "s1c", dot: "#4A9B6F" },
+  2: { label: "Seg. especial",   cls: "s2c", dot: "#C9A84C" },
+  3: { label: "Con problemas",   cls: "s3c", dot: "#BA7517" },
+  4: { label: "Alto riesgo",     cls: "s4c", dot: "#C0392B" },
+  5: { label: "Irrecuperable",   cls: "s5c", dot: "#A32D2D" },
+  6: { label: "En quiebra",      cls: "s6c", dot: "#5A5552" }
+};
+function si(n) { return SITS[n] || { label: "Situación " + n, cls: "s6c", dot: "#5A5552" }; }
+function fmt(n) { return "$" + Math.round(n * 1000).toLocaleString("es-AR"); }
+function fmtD(d) { return (!d || d === 0) ? "Sin atraso" : d + " días"; }
+function ini(nom) {
+  if (!nom) return "?";
+  const p = nom.trim().split(/\s+/);
+  return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : nom.substring(0, 2).toUpperCase();
+}
+function fmtPeriodo(p) {
+  const s = String(p);
+  return s.length === 6 ? s.slice(0, 4) + "/" + s.slice(4) : s;
+}
+
+let progTimer = null;
+function startProg() {
+  document.getElementById("prog-wrap").style.display = "block";
+  const fill = document.getElementById("prog-fill");
+  const lbl  = document.getElementById("prog-lbl");
+  const steps = [
+    { p: 15, t: "Conectando con el Banco Central..." },
+    { p: 40, t: "Consultando deudas actuales..." },
+    { p: 65, t: "Consultando historial 24 meses..." },
+    { p: 85, t: "Procesando información..." }
+  ];
+  let i = 0;
+  fill.style.width = "5%";
+  lbl.textContent = steps[0].t;
+  progTimer = setInterval(function() {
+    if (i < steps.length) { fill.style.width = steps[i].p + "%"; lbl.textContent = steps[i].t; i++; }
+  }, 800);
+}
+function endProg() {
+  clearInterval(progTimer);
+  document.getElementById("prog-fill").style.width = "100%";
+  document.getElementById("prog-lbl").textContent = "Completado.";
+  setTimeout(function() { document.getElementById("prog-wrap").style.display = "none"; }, 700);
+}
+
+function consultar() {
+  const cuit = document.getElementById("cuit").value.trim().replace(/\D/g, "");
+  const res  = document.getElementById("resultado");
+  res.innerHTML = "";
+
+  if (!cuit) {
+    res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>Ingresá tu CUIT para continuar.</div>';
+    return;
+  }
+
+  startProg();
+  document.getElementById("script-bcra") && document.getElementById("script-bcra").remove();
+
+  const cbName = "bcraCallback_" + Date.now();
+  window[cbName] = function(json) {
+    delete window[cbName];
+    document.getElementById("script-bcra") && document.getElementById("script-bcra").remove();
+    endProg();
+    if (!json.ok) {
+      res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>' + json.error + '</div>';
+      return;
+    }
+    renderizar(json);
+  };
+
+  const s = document.createElement("script");
+  s.id = "script-bcra";
+  s.src = API + "?cuit=" + cuit + "&callback=" + cbName;
+  s.onerror = function() {
+    endProg();
+    res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>Error al conectar con el servidor. Verificá tu conexión.</div>';
+  };
+  document.body.appendChild(s);
+}
+
+function renderizar(json) {
+  const res = document.getElementById("resultado");
+  const d   = json.actual.results;
+  const h   = json.historica.results;
+
+  const allE   = (d.periodos || []).flatMap(function(p) { return p.entidades; });
+  const peor   = allE.reduce(function(m, e) { return Math.max(m, e.situacion); }, 1) || 1;
+  const pi     = si(peor);
+  const total  = allE.reduce(function(s, e) { return s + e.monto; }, 0) || 0;
+  const cant   = allE.length;
+
+  var html = "";
+
+  // Header titular
+  html += '<div class="result-header">'
+    + '<div class="avatar">' + ini(d.denominacion) + '</div>'
+    + '<div>'
+    + '<div class="rh-name">' + d.denominacion + '</div>'
+    + '<div class="rh-cuit">CUIT ' + d.identificacion + '</div>'
+    + '</div>'
+    + '</div>';
+
+  // Score strip
+  html += '<div class="score-strip">'
+    + '<div class="score-box">'
+    + '<div class="score-val" style="color:' + pi.dot + '">' + peor + '</div>'
+    + '<div class="score-lbl">Situación máxima</div>'
+    + '<div class="score-sub" style="color:' + pi.dot + '">' + pi.label + '</div>'
+    + '</div>'
+    + '<div class="score-box">'
+    + '<div class="score-val" style="color:#E2C16A">' + fmt(total) + '</div>'
+    + '<div class="score-lbl">Exposición total</div>'
+    + '<div class="score-sub" style="color:#7A7570">' + cant + ' entidad' + (cant !== 1 ? 'es' : '') + '</div>'
+    + '</div>'
+    + '</div>';
+
+  // Deuda actual
+  html += '<div class="sec-wrap">'
+    + '<div class="sec-head"><i class="ti ti-building-bank" aria-hidden="true"></i><span class="sec-head-title">Deuda actual</span></div>'
+    + '<div class="sec-body">';
+
+  if (d.periodos && d.periodos.length > 0) {
+    d.periodos.forEach(function(periodo) {
+      html += '<div class="periodo-lbl">Período ' + fmtPeriodo(periodo.periodo) + '</div>';
+      periodo.entidades.forEach(function(e) {
+        var info = si(e.situacion);
+        html += '<div class="deuda-item">'
+          + '<div class="deuda-top">'
+          + '<div class="deuda-ent">' + e.entidad + '</div>'
+          + '<span class="badge ' + info.cls + '">Sit. ' + e.situacion + ' — ' + info.label + '</span>'
+          + '</div>'
+          + '<div class="deuda-grid">'
+          + '<div class="ds"><div class="ds-val">' + fmt(e.monto) + '</div><div class="ds-lbl">Monto adeudado</div></div>'
+          + '<div class="ds"><div class="ds-val" style="color:' + (e.diasAtrasoPago > 0 ? '#E8705F' : '#6DBF95') + '">' + fmtD(e.diasAtrasoPago) + '</div><div class="ds-lbl">Días de atraso</div></div>'
+          + '</div>'
+          + '</div>';
+      });
+    });
+  } else {
+    html += '<div class="empty-state"><i class="ti ti-circle-check" style="color:#4A9B6F" aria-hidden="true"></i>Sin deudas activas registradas</div>';
+  }
+  html += '</div></div>';
+
+  // Historial
+  html += '<div class="sec-wrap">'
+  + '<div class="sec-head"><i class="ti ti-history" aria-hidden="true"></i><span class="sec-head-title">Historial — últimos 24 meses</span></div>';
+
+if (h.periodos && h.periodos.length > 0) {
+  // Agrupar por entidad
+  const porEntidad = {};
+  h.periodos.forEach(function(p) {
+    p.entidades.forEach(function(e) {
+      if (!porEntidad[e.entidad]) porEntidad[e.entidad] = [];
+      porEntidad[e.entidad].push({ periodo: p.periodo, situacion: e.situacion, monto: e.monto });
+    });
+  });
+  // Ordenar entidades A→Z
+  const entidades = Object.keys(porEntidad).sort();
+
+  html += '<div class="sec-body" style="display:flex;flex-direction:column;gap:12px">';
+  entidades.forEach(function(nombre) {
+    const registros = porEntidad[nombre].sort(function(a,b){
+      return String(b.periodo).localeCompare(String(a.periodo));
+    });
+    const peorEnt = registros.reduce(function(m,r){ return Math.max(m,r.situacion); },1);
+    const infoPeor = si(peorEnt);
+
+    html += '<div style="background:var(--s2);border:.5px solid var(--b1);border-radius:9px;padding:.85rem 1rem">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">'
+      + '<div style="font-size:.8125rem;font-weight:500;color:var(--text);flex:1">' + nombre + '</div>'
+      + '<span class="badge ' + infoPeor.cls + '">Máx. Sit. ' + peorEnt + '</span>'
+      + '</div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:5px">';
+
+    registros.forEach(function(r) {
+      var info = si(r.situacion);
+      html += '<div title="' + fmt(r.monto) + '" style="background:var(--s3);border:.5px solid var(--b2);border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;align-items:center;min-width:56px">'
+        + '<span style="font-size:.6rem;color:var(--muted);letter-spacing:.04em">' + fmtPeriodo(r.periodo) + '</span>'
+        + '<span class="sdot" style="background:' + info.dot + ';width:8px;height:8px;margin:3px 0"></span>'
+        + '<span style="font-size:.65rem;font-weight:500;color:' + info.dot + '">Sit. ' + r.situacion + '</span>'
+        + '</div>';
+    });
+
+    html += '</div></div>';
+  });
+  html += '</div>';
+} else {
+  html += '<div class="sec-body"><div class="empty-state"><i class="ti ti-calendar-off" aria-hidden="true"></i>Sin historial disponible</div></div>';
+}
+html += '</div>';
+
+  // CTA
+  html += '<div class="cta-card">'
+    + '<p>Con este diagnóstico, desde <strong>Estudio Tango</strong> podemos diseñar tu plan de regularización y acompañarte hasta que tu situación crediticia quede <strong>limpia y activa</strong>.</p>'
+    + '<div class="cta-btns">'
+    + '<button class="btn-primary">Iniciar recuperación</button>'
+    + '<button class="btn-secondary">Hablar con un asesor</button>'
+    + '</div>'
+    + '</div>';
+
+  res.innerHTML = html;
+}
+
+document.getElementById("cuit").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") consultar();
+});
+</script>
+</body>
+</html>
