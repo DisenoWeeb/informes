@@ -438,6 +438,38 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
   color:#E8705F;font-size:.8125rem;display:flex;align-items:center;gap:10px;
 }
 .error-box i{font-size:17px;flex-shrink:0}
+.error-mantenimiento{
+  background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(22,16,16,.95));
+  border:.5px solid rgba(201,168,76,.2);
+  border-radius:13px;padding:1.5rem;
+  display:flex;flex-direction:column;align-items:center;gap:.75rem;
+  text-align:center;position:relative;overflow:hidden;
+}
+.error-mantenimiento::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);
+}
+.error-mant-icon{font-size:28px;color:var(--gold-dim)}
+.error-mant-title{
+  font-family:var(--serif);font-size:1.1rem;font-weight:500;
+  color:var(--text);letter-spacing:.01em;
+}
+.error-mant-desc{font-size:.775rem;color:var(--muted);line-height:1.75;max-width:380px}
+.error-mant-badge{
+  font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(201,168,76,.6);background:rgba(201,168,76,.08);
+  border:.5px solid rgba(201,168,76,.15);border-radius:20px;
+  padding:4px 12px;
+}
+.btn-reintentar{
+  margin-top:.25rem;
+  background:rgba(255,255,255,.05);color:var(--text);
+  border:.5px solid rgba(255,255,255,.12);border-radius:8px;
+  padding:9px 20px;font-size:.8rem;font-weight:500;
+  cursor:pointer;font-family:var(--sans);letter-spacing:.03em;
+  transition:all .2s ease;
+}
+.btn-reintentar:hover{background:rgba(255,255,255,.09)}
 
 /* ══════════════════════════════════════
    CTA CARD
@@ -863,7 +895,21 @@ function consultar() {
     if(s2) s2.remove();
     endProg();
     if(!json.ok){
-      res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>'+json.error+'</div>';
+      var msg = json.error || "";
+      var esMantenimiento = msg.toLowerCase().indexOf("mantenimiento") !== -1
+                         || msg.toLowerCase().indexOf("demor") !== -1
+                         || msg.toLowerCase().indexOf("momento") !== -1;
+      if(esMantenimiento){
+        res.innerHTML = '<div class="error-mantenimiento">'
+          + '<i class="ti ti-tool error-mant-icon" aria-hidden="true"></i>'
+          + '<div class="error-mant-badge">Servicio temporalmente no disponible</div>'
+          + '<div class="error-mant-title">El BCRA está en mantenimiento</div>'
+          + '<div class="error-mant-desc">La central de deudores del Banco Central se encuentra fuera de servicio en este momento. Esto es temporario y escapa a nuestro control.<br><br>Por favor intentá nuevamente en unos minutos.</div>'
+          + '<button class="btn-reintentar" onclick="consultar()"><i class="ti ti-refresh" style="margin-right:6px"></i>Reintentar ahora</button>'
+          + '</div>';
+      } else {
+        res.innerHTML = '<div class="error-box"><i class="ti ti-alert-circle" aria-hidden="true"></i>'+msg+'</div>';
+      }
       return;
     }
     renderizar(json);
