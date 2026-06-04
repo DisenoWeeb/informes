@@ -39,26 +39,20 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
 #loader-canvas{position:absolute;inset:0;pointer-events:none}
 
 .loader-logo{
-  display:flex;align-items:center;gap:14px;
+  display:flex;flex-direction:column;align-items:center;gap:0;
   opacity:0;transform:scale(.88);
   animation:loaderLogoIn .7s cubic-bezier(.22,1,.36,1) .2s forwards;
   position:relative;z-index:1;
 }
 .loader-logo-img{
-  width:58px;height:58px;border-radius:10px;overflow:hidden;
-  border:1px solid rgba(201,168,76,.25);
-  box-shadow:0 0 30px rgba(201,168,76,.15);
+  width:250px;height:250px;border-radius:0;overflow:hidden;
 }
 .loader-logo-img img{width:100%;height:100%;object-fit:contain}
 .loader-logo-fallback{
-  width:58px;height:58px;border-radius:10px;overflow:hidden;
-  border:1px solid rgba(201,168,76,.25);
+  width:250px;height:250px;
   display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,rgba(107,15,26,.8),rgba(38,3,8,.9));
-  font-family:var(--serif);font-size:32px;color:var(--gold2);
+  font-family:var(--serif);font-size:80px;color:var(--gold2);
 }
-.loader-brand-name{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:.08em;color:var(--text)}
-.loader-brand-sub{font-size:.6875rem;color:rgba(201,168,76,.5);letter-spacing:.18em;text-transform:uppercase;margin-top:3px}
 
 .loader-messages{
   margin-top:2.5rem;height:22px;
@@ -99,7 +93,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
 ══════════════════════════════════════ */
 #bg-canvas{
   position:fixed;inset:0;pointer-events:none;z-index:0;
-  opacity:.6;
+  opacity:1;
 }
 
 /* ══════════════════════════════════════
@@ -114,45 +108,40 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
    SIDEBAR
 ══════════════════════════════════════ */
 .sidebar{
-  width:360px;flex-shrink:0;
+  width:320px;flex-shrink:0;
   background:linear-gradient(180deg,var(--bordo-deep) 0%,rgba(22,2,6,.98) 100%);
   border-right:1px solid rgba(201,168,76,.1);
-  display:flex;flex-direction:column;
-  padding:2.5rem 2.25rem;
+  display:flex;flex-direction:column;align-items:center;
+  padding:1.5rem 1.5rem;
   position:sticky;top:0;height:100vh;overflow-y:auto;
 }
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-track{background:transparent}
 .sidebar::-webkit-scrollbar-thumb{background:rgba(201,168,76,.15);border-radius:2px}
 
-.brand{display:flex;align-items:center;gap:13px;margin-bottom:2.75rem}
+.brand{display:flex;justify-content:center;margin-bottom:2rem}
 .brand-mark{
-  width:52px;height:52px;border-radius:9px;flex-shrink:0;
-  border:1px solid rgba(201,168,76,.22);
+  width:250px;height:250px;flex-shrink:0;
   overflow:hidden;
-  box-shadow:0 4px 20px rgba(107,15,26,.4);
 }
 .brand-mark img{width:100%;height:100%;object-fit:contain;display:block}
 .logo-fallback{
   width:100%;height:100%;
   display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,rgba(201,168,76,.16),rgba(107,15,26,.3));
-  font-family:var(--serif);font-size:26px;color:var(--gold2);
+  font-family:var(--serif);font-size:80px;color:var(--gold2);
 }
-.brand-name{font-family:var(--serif);font-size:17px;font-weight:500;color:var(--text);letter-spacing:.06em;line-height:1.2}
-.brand-sub{font-size:.6rem;color:rgba(201,168,76,.4);letter-spacing:.16em;text-transform:uppercase;margin-top:3px}
 
 /* Título hero del sidebar */
 .hero-title{
-  font-family:var(--serif);font-size:2.1rem;font-weight:400;
+  font-family:var(--serif);font-size:1.65rem;font-weight:400;
   line-height:1.18;color:var(--text);letter-spacing:-.015em;
-  margin-bottom:1rem;
+  margin-bottom:.75rem;text-align:center;
 }
 .hero-title em{font-style:italic;color:var(--gold2)}
 
 .hero-desc{
-  font-size:.8125rem;color:var(--muted);line-height:1.8;
-  font-weight:300;margin-bottom:2.25rem;
+  font-size:.775rem;color:var(--muted);line-height:1.75;
+  font-weight:300;margin-bottom:1.5rem;text-align:center;
 }
 
 /* Bloque rotativo de beneficios */
@@ -289,14 +278,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
   display:flex;flex-direction:column;align-items:center;gap:.75rem;
 }
 .prog-logo-mini{
-  display:flex;align-items:center;gap:9px;
+  display:flex;align-items:center;justify-content:center;
 }
 .prog-logo-mini-img{
-  width:30px;height:30px;border-radius:6px;overflow:hidden;
+  width:52px;height:52px;border-radius:8px;overflow:hidden;
   border:.5px solid rgba(201,168,76,.2);
 }
 .prog-logo-mini-img img{width:100%;height:100%;object-fit:contain}
-.prog-logo-mini-name{font-family:var(--serif);font-size:13px;letter-spacing:.06em;color:var(--muted)}
 .prog-msg-wrap{height:18px;position:relative;overflow:hidden;width:100%;text-align:center}
 .prog-msg{
   position:absolute;left:0;right:0;
@@ -491,13 +479,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
    MOBILE
 ══════════════════════════════════════ */
 @media(max-width:860px){
-  #bg-canvas{display:none}
   .layout{flex-direction:column;min-height:100vh}
   .sidebar{
     width:100%;position:static;height:auto;
-    padding:1.75rem 1.5rem 1.5rem;
+    padding:1.5rem 1.5rem 1.25rem;
   }
-  .hero-title{font-size:1.65rem}
+  .hero-title{font-size:1.4rem}
+  .brand-mark{width:180px;height:180px}
+  .loader-logo-img{width:180px;height:180px}
   .main{padding:1.25rem 1.25rem 3rem}
   .input-row{flex-direction:column}
   .btn-consultar{width:100%;padding:14px}
@@ -535,11 +524,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
       <img src="https://res.cloudinary.com/dwgwbdtud/image/upload/v1780529924/rtt5jpien7f7sgp9wddp.png" alt="TANGO"
            onerror="this.parentElement.style.display='none';document.querySelector('.loader-logo-fallback').style.display='flex'">
     </div>
-    <div class="loader-logo-fallback" style="display:none;position:absolute">T</div>
-    <div>
-      <div class="brand-name" style="font-family:var(--serif);font-size:20px;letter-spacing:.08em;color:var(--text)">TANGO</div>
-      <div class="brand-sub" style="font-size:.6rem;color:rgba(201,168,76,.45);letter-spacing:.16em;text-transform:uppercase;margin-top:3px">Recuperación financiera</div>
-    </div>
+    <div class="loader-logo-fallback" style="display:none">T</div>
   </div>
 
   <div class="loader-messages">
@@ -565,10 +550,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
         <img src="https://res.cloudinary.com/dwgwbdtud/image/upload/v1780529924/rtt5jpien7f7sgp9wddp.png" alt="TANGO"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="logo-fallback" style="display:none">T</div>
-      </div>
-      <div>
-        <div class="brand-name">TANGO</div>
-        <div class="brand-sub">Recuperación financiera</div>
       </div>
     </div>
 
@@ -623,7 +604,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;ove
             <div class="prog-logo-mini-img">
               <img src="https://res.cloudinary.com/dwgwbdtud/image/upload/v1780529924/rtt5jpien7f7sgp9wddp.png" alt="">
             </div>
-            <span class="prog-logo-mini-name" style="font-family:var(--serif)">TANGO</span>
           </div>
           <div class="prog-msg-wrap" id="prog-msg-wrap">
             <div class="prog-msg" id="pm0">Analizando información financiera...</div>
@@ -717,9 +697,6 @@ function reservarTurno() {
    CANVAS DE PARTÍCULAS FONDO
 ══════════════════════════════════════════════ */
 (function initBgCanvas(){
-  var isMobile = window.matchMedia("(max-width:860px)").matches;
-  if(isMobile) return;
-
   var canvas = document.getElementById("bg-canvas");
   var ctx = canvas.getContext("2d");
   var W, H, particles, lines;
@@ -731,14 +708,14 @@ function reservarTurno() {
   resize();
   window.addEventListener("resize", resize);
 
-  var N = 45;
+  var N = 55;
   particles = [];
   for(var i=0;i<N;i++){
     particles.push({
       x: Math.random()*W, y: Math.random()*H,
-      r: Math.random()*1.1+.2,
+      r: Math.random()*1.4+.3,
       vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,
-      a: Math.random()*.25+.05
+      a: Math.random()*.45+.1
     });
   }
 
@@ -754,7 +731,7 @@ function reservarTurno() {
           ctx.beginPath();
           ctx.moveTo(particles[i].x,particles[i].y);
           ctx.lineTo(particles[j].x,particles[j].y);
-          ctx.strokeStyle="rgba(201,168,76,"+(0.03*(1-dist/160))+")";
+          ctx.strokeStyle="rgba(201,168,76,"+(0.07*(1-dist/160))+")";
           ctx.lineWidth=.4;
           ctx.stroke();
         }
